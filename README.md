@@ -87,21 +87,25 @@ Read the inbox and the reports with:
 ### AI help
 
 Recreate works without AI by plotting points by hand or pasting one field per
-line. The AI buttons run on Cloudflare Workers AI (the `"ai"` binding in
-`wrangler.jsonc`). The vision model that reads scans is Llama 3.2, which Meta
-gates behind a one-time licence acceptance on the account. Accept it once:
+line. The AI buttons prefer **orproxy** / OpenRouter, an OpenAI-compatible proxy:
 
-- In the Cloudflare dashboard: **Workers AI → Models → Llama 3.2 11B Vision →
-  Agree**, or
-- From a terminal with your account id and API token set:
+1. Set the key as a Worker secret (never in a file):
 
-      curl -X POST "https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/ai/run/@cf/meta/llama-3.2-11b-vision-instruct" \
-        -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
-        -H "content-type: application/json" -d '{"prompt":"agree"}'
+       npx wrangler secret put ORPROXY_API_KEY
 
-To use an OpenAI-compatible provider instead, remove the `"ai"` binding and run
-`npx wrangler secret put OPENAI_API_KEY` (optionally `OPENAI_BASE_URL` /
-`AI_MODEL`, defaults to OpenAI and `gpt-4o-mini`).
+   Or add it under Cloudflare → Workers → `open-template-library` → Settings →
+   Variables and Secrets → `ORPROXY_API_KEY` (type: Secret).
+2. `wrangler.jsonc` already sets `ORPROXY_URL`
+   (`https://openrouter.ai/api/v1`) and `ORPROXY_MODEL`
+   (`openai/gpt-4o-mini`, a vision model). Point `ORPROXY_URL` at your own
+   orproxy deployment if it differs; any OpenAI-compatible proxy works.
+3. Redeploy with `npm run deploy` (or push to `main` once Git is connected).
+
+`OPENAI_API_KEY` / `OPENAI_BASE_URL` are accepted as aliases, and a Cloudflare
+service binding named `AI_PROXY` is used first when present — it must answer
+`POST /chat/completions` in the OpenAI format. With no proxy configured, the
+Worker falls back to Workers AI (`"ai"` in `wrangler.jsonc`); Meta's Llama
+vision model there needs a one-time licence acceptance in Workers AI.
 
 `AI_DAILY_LIMIT` (default 20 per IP per day) keeps an open site from spending
 without limit. With neither configured the AI buttons report that it is not

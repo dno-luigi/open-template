@@ -23,8 +23,13 @@
     "binding": "AI"
   },
   "vars": {
-    "AI_DAILY_LIMIT": "20"
+    "AI_DAILY_LIMIT": "20",
+    // orproxy / OpenRouter. Set ORPROXY_API_KEY as a Worker secret; without it the
+    // Worker falls back to Workers AI. Point ORPROXY_URL at your own proxy if it differs.
+    "ORPROXY_URL": "https://openrouter.ai/api/v1",
+    "ORPROXY_MODEL": "openai/gpt-4o-mini"
   }
-  // AI runs on Cloudflare Workers AI. To use an OpenAI-compatible provider instead,
-  // remove the "ai" binding above and set OPENAI_API_KEY (plus AI_MODEL / OPENAI_BASE_URL).
+  // A Cloudflare service binding named AI_PROXY also works, and is used before
+  // the URL: it must answer POST /chat/completions in the OpenAI format.
+  // "services": [{ "binding": "AI_PROXY", "service": "your-ai-proxy" }]
 }

@@ -1,21 +1,44 @@
 // AI help for the Recreate panel (src/components/recreate.js -> ai.chat).
 //
-// Two ways to run it, both on your own account, never on Wron's:
-//   Workers AI         add the "ai" binding in wrangler.jsonc
-//   OpenAI-compatible  `wrangler secret put OPENAI_API_KEY` (+ OPENAI_BASE_URL, AI_MODEL)
+// Providers, in the order they are used, all on your own account, never Wron's:
 //
-// A scan sends a picture with the question, so image parts are kept: Workers AI
-// gets the bytes, an OpenAI-compatible provider gets the image_url parts. With
-// neither configured the endpoint refuses with a readable message, and every
-// call is counted per visitor IP so an open site cannot spend credits without limit.
+//   orproxy / OpenRouter / any OpenAI-compatible proxy
+//     ORPROXY_URL + ORPROXY_API_KEY secrets/vars, or an AI_PROXY service binding
+//     (the binding is called as POST /chat/completions with an OpenAI body)
+//   Workers AI
+//     the "ai" binding in wrangler.jsonc, used when no proxy is configured
+//
+// A scan sends a picture with the question, so image parts are kept: the proxy
+// receives OpenAI image_url parts, Workers AI receives the bytes. With neither
+// configured the endpoint refuses with a readable message, and every call is
+// counted per visitor IP so an open site cannot spend credits without limit.
 import { sha256Hex } from "./crypto.js";
 import { clientIp, fail, json, nowIso } from "./util.js";
 
 const DEFAULT_TEXT_MODEL = "@cf/meta/llama-3.3-70b-instruct-fp8-fast";
 const DEFAULT_VISION_MODEL = "@cf/meta/llama-3.2-11b-vision-instruct";
-const DEFAULT_OPENAI_MODEL = "gpt-4o-mini";
+/** An OpenRouter-style model slug works on the proxy; a vision model by default. */
+const DEFAULT_PROXY_MODEL = "openai/gpt-4o-mini";
 const MAX_IMAGE_BYTES = 4 * 1024 * 1024;
 const MAX_IMAGES = 2;
+
+function proxyConfig(env) {
+  return {
+    binding: env.AI_PROXY || null,
+    key: env.ORPROXY_API_KEY || env.OPENAI_API_KEY || "",
+    base: String(env.ORPROXY_URL || env.OPENAI_BASE_URL || "").replace(/\/+$/, ""),
+    model: env.ORPROXY_MODEL || env.AI_MODEL || "",
+  };
+}
+
+/** Which backend a call will use: "proxy-binding" | "proxy" | "workers-ai" | "". */
+function providerName(env) {
+  const p = proxyConfig(env);
+  if (p.binding) return "proxy-binding";
+  if (p.key && p.base) return "proxy";
+  if (env.AI) return "workers-ai";
+  return "";
+}
 
 /** One incoming message, keeping text and pictures apart. */
 function normalize(message) {
@@ -69,11 +92,11 @@ async function imageBytes(url) {
 export async function handleAi(request, env, body) {
   if (body.op === "image") return fail(501, "not_supported", "Image generation is not set up on this site.");
 
-  if (!env.AI && !env.OPENAI_API_KEY) {
+  if (!providerName(env)) {
     return fail(
       503,
       "ai_not_configured",
-      "AI help is not connected. Add an OPENAI_API_KEY secret to the Worker, or bind Workers AI (see README.md).",
+      "AI help is not connected. Set ORPROXY_URL and ORPROXY_API_KEY on the Worker, or bind Workers AI (see README.md).",
     );
   }
 
@@ -95,8 +118,10 @@ export async function handleAi(request, env, body) {
   }
 
   let text;
+  const provider = providerName(env);
   try {
-    text = await ask(env, messages);
+    console.log("ai provider:", provider);
+    text = provider === "workers-ai" ? await askWorkersAi(env, messages) : await askProxy(env, messages, proxyConfig(env));
   } catch (err) {
     console.error("ai failed:", err && err.stack ? err.stack : err);
     const detail = String((err && err.message) || "");
@@ -107,6 +132,9 @@ export async function handleAi(request, env, body) {
         "ai_license",
         "The vision model needs its licence accepted once on this Cloudflare account (Workers AI, or the agree call in README.md).",
       );
+    }
+    if (/401|403|unauthori[sz]ed|invalid api key/i.test(detail)) {
+      return fail(502, "ai_key_rejected", "The AI proxy rejected the key. Check ORPROXY_API_KEY on the Worker.");
     }
     return fail(502, "ai_failed", "The form could not be read right now. Try again, or plot the points by hand.");
   }
@@ -120,21 +148,15 @@ export async function handleAi(request, env, body) {
   return json({ text });
 }
 
-async function ask(env, messages) {
-  if (env.AI) {
-    const images = [];
-    for (const message of messages) {
-      for (const url of message.images) images.push(await imageBytes(url));
-    }
-    const chat = messages.map((m) => ({ role: m.role, content: m.text || "(the picture below)" }));
-    const model = env.AI_MODEL || (images.length ? DEFAULT_VISION_MODEL : DEFAULT_TEXT_MODEL);
-    const out = await env.AI.run(model, images.length ? { messages: chat, image: images } : { messages: chat });
-    const text = typeof out === "string" ? out : out && out.response;
-    if (!text) throw new Error("The model returned nothing.");
-    return String(text);
-  }
+/** OpenAI-compatible chat completions, through the URL or through the service binding. */
+async function askProxy(env, messages, proxy) {
+  const model = proxy.model || DEFAULT_PROXY_MODEL;
+  const headers = { "content-type": "application/json" };
+  if (proxy.key) headers.authorization = `Bearer ${proxy.key}`;
+  // OpenRouter app attribution, when the owner sets it.
+  if (env.ORPROXY_SITE_URL) headers["HTTP-Referer"] = String(env.ORPROXY_SITE_URL).slice(0, 200);
+  if (env.ORPROXY_APP_NAME) headers["X-Title"] = String(env.ORPROXY_APP_NAME).slice(0, 80);
 
-  const base = (env.OPENAI_BASE_URL || "https://api.openai.com/v1").replace(/\/$/, "");
   const openai = messages.map((m) => ({
     role: m.role,
     content: m.images.length
@@ -144,14 +166,40 @@ async function ask(env, messages) {
         ]
       : m.text,
   }));
-  const res = await fetch(`${base}/chat/completions`, {
-    method: "POST",
-    headers: { "content-type": "application/json", authorization: `Bearer ${env.OPENAI_API_KEY}` },
-    body: JSON.stringify({ model: env.AI_MODEL || DEFAULT_OPENAI_MODEL, messages: openai, temperature: 0.2 }),
-  });
+
+  const body = JSON.stringify({ model, messages: openai, temperature: 0.2, max_tokens: 2000 });
+  const target = proxy.binding ? "https://ai-proxy/chat/completions" : `${proxy.base}/chat/completions`;
+  const res = proxy.binding
+    ? await proxy.binding.fetch(new Request(target, { method: "POST", headers, body }))
+    : await fetch(target, { method: "POST", headers, body });
+
   const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error((data && data.error && data.error.message) || `The AI provider answered ${res.status}.`);
-  const text = data && data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content;
+  if (!res.ok) {
+    const detail = (data && data.error && data.error.message) || (data && data.message) || `The AI proxy answered ${res.status}.`;
+    throw new Error(detail);
+  }
+  const text = contentText(data && data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content);
+  if (!text) throw new Error("The model returned nothing.");
+  return text;
+}
+
+/** A reply that may arrive as a string or as OpenAI content parts. */
+function contentText(content) {
+  if (typeof content === "string") return content;
+  if (Array.isArray(content)) return content.map((part) => (part && (part.text || part.content)) || "").join("");
+  return "";
+}
+
+/** Cloudflare Workers AI, used when no proxy is configured. */
+async function askWorkersAi(env, messages) {
+  const images = [];
+  for (const message of messages) {
+    for (const url of message.images) images.push(await imageBytes(url));
+  }
+  const chat = messages.map((m) => ({ role: m.role, content: m.text || "(the picture below)" }));
+  const model = env.AI_MODEL || (images.length ? DEFAULT_VISION_MODEL : DEFAULT_TEXT_MODEL);
+  const out = await env.AI.run(model, images.length ? { messages: chat, image: images } : { messages: chat });
+  const text = typeof out === "string" ? out : out && out.response;
   if (!text) throw new Error("The model returned nothing.");
   return String(text);
 }
