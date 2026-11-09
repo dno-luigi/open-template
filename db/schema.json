@@ -1,0 +1,43 @@
+{
+  "tables": [
+    {
+      "name": "community_templates",
+      "access": "public",
+      "columns": [
+        { "name": "title", "type": "text" },
+        { "name": "category", "type": "text" },
+        { "name": "author_name", "type": "text" },
+        { "name": "content", "type": "json" },
+        { "name": "shared_on", "type": "date" },
+        { "name": "uses", "type": "integer" }
+      ]
+    },
+    {
+      "name": "shared_templates",
+      "access": "submit",
+      "columns": [
+        { "name": "title", "type": "text" },
+        { "name": "category", "type": "text" },
+        { "name": "author_name", "type": "text" },
+        { "name": "content", "type": "json" },
+        { "name": "confirmed_removed", "type": "boolean" }
+      ]
+    },
+    {
+      "name": "template_reports",
+      "access": "submit",
+      "columns": [
+        { "name": "template_id", "type": "text" },
+        { "name": "template_title", "type": "text" },
+        { "name": "reason", "type": "text" }
+      ]
+    },
+    {
+      "name": "template_copies",
+      "access": "submit",
+      "columns": [
+        { "name": "template_id", "type": "text" }
+      ]
+    }
+  ]
+}

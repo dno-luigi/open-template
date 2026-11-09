@@ -1,0 +1,22 @@
+{
+  "name": "Open Template Library",
+  "description": "Upload or describe any form, plot its points and get a fill-in template. Save it, share it, download a PDF. Work stays on your device.",
+  "lang": "en",
+  "favicon": "📄",
+  "image": "https://firebasestorage.googleapis.com/v0/b/wron-ai.firebasestorage.app/o/site-assets%2Fsite-1793848279712%2F43a20c54-4da9-44bb-b004-d13cad478eab.webp?alt=media&token=717459c0-4636-4922-aec3-f4843edf6240",
+  "theme": {
+    "colors": {
+      "bg": "#FFFFFF",
+      "surface": "#F5F3FF",
+      "ink": "#141026",
+      "muted": "#615B73",
+      "line": "#E6E2F2",
+      "primary": "#5B3DF5",
+      "primaryInk": "#FFFFFF",
+      "accent": "#FF7A45"
+    },
+    "fonts": { "display": "Hanken Grotesk", "body": "Hanken Grotesk" },
+    "radius": "12px",
+    "scheme": "light"
+  }
+}

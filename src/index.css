@@ -1,0 +1,66 @@
+@layer base {
+  html { -webkit-text-size-adjust: 100%; }
+  html, body, #root { width: 100%; max-width: 100%; overflow-x: clip; }
+  body { font-size: 16px; line-height: 1.5; }
+  :focus-visible { outline: 2px solid #5B3DF5; outline-offset: 2px; border-radius: 4px; }
+  ::selection { background: #E2DBFF; color: #141026; }
+}
+
+@layer components {
+  /* Page title: 56px desktop, 36px mobile */
+  .t-page { font-family: var(--font-display, inherit); font-size: 36px; font-weight: 650; letter-spacing: -0.035em; line-height: 1.02; }
+  @media (min-width: 768px) { .t-page { font-size: 56px; } }
+  /* Section title: 38px desktop, 29px mobile */
+  .t-section { font-size: 29px; font-weight: 600; letter-spacing: -0.025em; line-height: 1.1; }
+  @media (min-width: 768px) { .t-section { font-size: 42px; line-height: 1; letter-spacing: -0.035em; } }
+  .t-meta { font-size: 13px; font-weight: 500; line-height: 1.4; }
+  .t-btn { font-size: 15px; font-weight: 650; }
+
+  .ui-link { text-underline-offset: 4px; text-decoration-thickness: 1px; }
+  .ui-link:hover, .ui-link:focus-visible { text-decoration-line: underline; }
+
+  /* Grid used across the site: 12 columns, 64px outer margins on desktop */
+  .page-grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; }
+  .page-x { padding-left: 20px; padding-right: 20px; }
+  @media (min-width: 768px) { .page-x { padding-left: 40px; padding-right: 40px; } }
+  @media (min-width: 1200px) { .page-x { padding-left: 64px; padding-right: 64px; } }
+
+  @keyframes status-pulse {
+    0% { box-shadow: 0 0 0 0 rgba(91, 61, 245, 0.35); }
+    100% { box-shadow: 0 0 0 10px rgba(91, 61, 245, 0); }
+  }
+  .status-pulse { animation: status-pulse 700ms ease-out 1; }
+
+  @keyframes row-tint { from { background-color: #EEEAFE; } to { background-color: transparent; } }
+  .row-tint { animation: row-tint 1200ms ease-out 1; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .status-pulse, .row-tint { animation: none; }
+  }
+}
+
+/* The page: US Letter (8.5 x 11 in). 1cqw = 1% of the page width, so 11pt = 1.797cqw. */
+.sheet-wrap { container-type: inline-size; }
+.sheet {
+  background: #fff;
+  color: #111;
+  font-size: 1.797cqw;
+  line-height: 1.3;
+  min-height: 129.41cqw;
+  border: 1px solid #E6E2F2;
+  box-shadow: 0 1px 2px rgba(20, 16, 38, 0.05), 0 22px 44px -22px rgba(91, 61, 245, 0.28);
+  overflow-wrap: anywhere;
+}
+.sheet-serif { font-family: "Times New Roman", Times, "Liberation Serif", serif; }
+.sheet-sans { font-family: Helvetica, Arial, "Liberation Sans", sans-serif; }
+@container (max-width: 520px) {
+  .sheet-wrap:not(.is-thumb) .sheet { font-size: 2.6cqw; }
+}
+.sl { white-space: pre-wrap; margin: 0; }
+.sl-bold { font-weight: 700; }
+.sl-name { font-size: 2em; font-weight: 700; line-height: 1.15; }
+.sl-heading { font-weight: 700; border-bottom: 1px solid #111; margin-top: 0.45em; margin-bottom: 0.25em; padding-bottom: 0.05em; }
+.sl-empty { color: #5B3DF5; }
+.sl-blank { height: 1.3em; }
+.sl-rule { border: 0; border-top: 1px solid #111; margin: 0.4em 0 0.5em; height: 0; }
+.sl-hint { color: #615B73; text-align: center; padding: 18% 8%; font-family: "Hanken Grotesk", system-ui, sans-serif; }

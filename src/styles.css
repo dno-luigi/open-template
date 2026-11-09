@@ -1,0 +1,22 @@
+@import "./index.css";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root { --c-bg: 255 255 255; --c-surface: 245 243 255; --c-ink: 20 16 38; --c-muted: 97 91 115; --c-line: 230 226 242; --c-primary: 91 61 245; --c-primary-ink: 255 255 255; --c-accent: 255 122 69; --font-display: "Hanken Grotesk", ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif; --font-body: "Hanken Grotesk", ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif; --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace; --radius: 12px; color-scheme: light; }
+
+@layer base {
+html { -webkit-text-size-adjust: 100%; text-rendering: optimizeLegibility; }
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+.lenis.lenis-stopped { overflow: clip; }
+body { background: rgb(var(--c-bg)); color: rgb(var(--c-ink)); font-family: var(--font-body); -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+h1, h2, h3, h4 { font-family: var(--font-display); text-wrap: balance; }
+p { text-wrap: pretty; }
+::selection { background: rgb(var(--c-primary) / .9); color: rgb(var(--c-primary-ink)); }
+:focus-visible { outline: 2px solid rgb(var(--c-primary)); outline-offset: 3px; }
+img, video { max-width: 100%; }
+#root { min-height: 100vh; display: flex; flex-direction: column; }
+}
