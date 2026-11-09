@@ -8,6 +8,7 @@
     "api": "wrangler dev",
     "build": "vite build",
     "preview": "vite preview",
+    "experiment": "node scripts/experiment.mjs",
     "deploy": "npm run build && wrangler deploy",
     "db:migrate:local": "wrangler d1 migrations apply open-template-library --local",
     "db:migrate": "wrangler d1 migrations apply open-template-library --remote"

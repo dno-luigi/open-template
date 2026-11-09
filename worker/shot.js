@@ -1,8 +1,8 @@
 // Screenshot a page with Cloudflare Browser Run (Playwright) so it can be read
 // by the vision model and rebuilt as a fill-in template.
 //
-//   POST /api/site/:siteId/shot { url }
-//   -> { image: "data:image/jpeg;base64,...", url }
+//   POST /api/site/:siteId/shot { url, fullPage?, width?, height?, scale?, settle? }
+//   -> { image: "data:image/jpeg;base64,...", url, width, height, fullPage, scale }
 //
 // The browser binding is optional: without BROWSER the endpoint says so and the
 // upload path still works. Every capture is counted against the same daily
@@ -17,6 +17,11 @@ const MAX_IMAGE_BYTES = 3_500_000;
 const PRIVATE =
   /^(localhost|127\.|0\.0\.0\.0|10\.|169\.254\.|192\.168\.|172\.(1[6-9]|2\d|3[01])\.|\[::1\])/i;
 const PRIVATE_SUFFIX = /\.(local|internal|localhost)$/i;
+
+const clamp = (value, min, max, fallback) => {
+  const n = Number(value);
+  return Number.isFinite(n) ? Math.min(max, Math.max(min, Math.round(n))) : fallback;
+};
 
 export async function handleShot(request, env, body) {
   if (!env.BROWSER) {
@@ -37,6 +42,12 @@ export async function handleShot(request, env, body) {
     return fail(400, "bad_url", "That address cannot be captured from here.");
   }
 
+  const width = clamp(body.width, 320, 2000, 1200);
+  const height = clamp(body.height, 400, 3000, 1600);
+  const scale = Number(body.scale) === 2 ? 2 : 1;
+  const fullPage = body.fullPage !== false;
+  const settle = body.settle !== false;
+
   const db = env.DB;
   const day = nowIso().slice(0, 10);
   const ipHash = await sha256Hex(clientIp(request));
@@ -54,17 +65,43 @@ export async function handleShot(request, env, body) {
   let browser;
   try {
     browser = await launch(env.BROWSER);
-    const page = await browser.newPage({ viewport: { width: 1200, height: 1600 } });
+    const page = await browser.newPage({ viewport: { width, height }, deviceScaleFactor: scale });
     const response = await page.goto(target.href, { waitUntil: "networkidle", timeout: 30_000 });
     if (!response || response.status() >= 400) {
       return fail(502, "shot_failed", `That page answered ${response ? response.status() : "nothing"}.`);
     }
-    // Let reveal/lazy sections settle before capturing.
-    await page.waitForTimeout(1000);
 
-    let buffer = await page.screenshot({ type: "jpeg", quality: 78, fullPage: true });
+    if (settle) {
+      // Scroll the page so reveal/lazy sections render, then return to the top.
+      await page.evaluate(async () => {
+        const pause = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+        const step = Math.max(300, Math.round(window.innerHeight * 0.75));
+        const limit = document.documentElement.scrollHeight;
+        for (let y = 0, n = 0; y < limit && n < 60; y += step, n += 1) {
+          window.scrollTo(0, y);
+          await pause(120);
+        }
+        window.scrollTo(0, 0);
+        await pause(300);
+      });
+    }
+    await page.waitForTimeout(400);
+
+    let buffer = await page.screenshot({
+      type: "jpeg",
+      quality: 80,
+      fullPage,
+      animations: "disabled",
+      caret: "hide",
+    });
     if (buffer.length > MAX_IMAGE_BYTES) {
-      buffer = await page.screenshot({ type: "jpeg", quality: 78, fullPage: false });
+      buffer = await page.screenshot({
+        type: "jpeg",
+        quality: 78,
+        fullPage: false,
+        animations: "disabled",
+        caret: "hide",
+      });
     }
 
     if (db) {
@@ -73,7 +110,14 @@ export async function handleShot(request, env, body) {
         .bind(crypto.randomUUID(), ipHash, day, nowIso())
         .run();
     }
-    return json({ image: `data:image/jpeg;base64,${toBase64(buffer)}`, url: target.href });
+    return json({
+      image: `data:image/jpeg;base64,${toBase64(buffer)}`,
+      url: target.href,
+      width,
+      height,
+      fullPage,
+      scale,
+    });
   } catch (err) {
     console.error("screenshot failed:", err && err.stack ? err.stack : err);
     return fail(502, "shot_failed", "That page could not be captured. Check the address and try again.");

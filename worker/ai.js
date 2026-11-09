@@ -19,6 +19,8 @@ const DEFAULT_TEXT_MODEL = "@cf/meta/llama-3.3-70b-instruct-fp8-fast";
 const DEFAULT_VISION_MODEL = "@cf/meta/llama-3.2-11b-vision-instruct";
 /** An OpenRouter-style model slug works on the proxy; a vision model by default. */
 const DEFAULT_PROXY_MODEL = "openai/gpt-4o-mini";
+const DEFAULT_MODELS =
+  "openai/gpt-4o-mini,google/gemini-2.5-flash,anthropic/claude-sonnet-4.5,qwen/qwen2.5-vl-72b-instruct";
 const MAX_IMAGE_BYTES = 4 * 1024 * 1024;
 const MAX_IMAGES = 2;
 
@@ -108,6 +110,18 @@ export async function handleAi(request, env, body) {
   const messages = messagesFor(body);
   if (!messages.length) return fail(400, "empty_prompt", "Describe the form you want first.");
 
+  // Only models the owner listed can be chosen, so a caller cannot run up a bill.
+  const models = String(env.AI_MODELS || DEFAULT_MODELS)
+    .split(",")
+    .map((m) => m.trim())
+    .filter(Boolean);
+  const requested = typeof body.model === "string" ? body.model.trim() : "";
+  if (requested && !models.includes(requested)) {
+    return fail(400, "model_not_allowed", `Choose one of: ${models.join(", ")}.`);
+  }
+  // A full page of items can run past 2k tokens; too small a cap truncates the JSON.
+  const maxTokens = Math.min(8000, Math.max(256, Number(body.max_tokens) || 6000));
+
   const db = env.DB;
   const day = nowIso().slice(0, 10);
   const ipHash = await sha256Hex(clientIp(request));
@@ -125,8 +139,13 @@ export async function handleAi(request, env, body) {
   let text;
   const provider = providerName(env);
   try {
-    console.log("ai provider:", provider);
-    text = provider === "workers-ai" ? await askWorkersAi(env, messages) : await askProxy(env, messages, proxyConfig(env));
+    const proxy = proxyConfig(env);
+    if (requested) proxy.model = requested;
+    console.log("ai provider:", provider, "model:", requested || proxy.model || "default");
+    text =
+      provider === "workers-ai"
+        ? await askWorkersAi(env, messages, maxTokens)
+        : await askProxy(env, messages, proxy, maxTokens);
   } catch (err) {
     console.error("ai failed:", err && err.stack ? err.stack : err);
     const detail = String((err && err.message) || "");
@@ -154,7 +173,7 @@ export async function handleAi(request, env, body) {
 }
 
 /** OpenAI-compatible chat completions, through the URL or through the service binding. */
-async function askProxy(env, messages, proxy) {
+async function askProxy(env, messages, proxy, maxTokens = 6000) {
   const model = proxy.model || DEFAULT_PROXY_MODEL;
   const headers = { "content-type": "application/json" };
   if (proxy.key) headers.authorization = `Bearer ${proxy.key}`;
@@ -172,7 +191,7 @@ async function askProxy(env, messages, proxy) {
       : m.text,
   }));
 
-  const body = JSON.stringify({ model, messages: openai, temperature: 0.2, max_tokens: 2000 });
+  const body = JSON.stringify({ model, messages: openai, temperature: 0.2, max_tokens: maxTokens });
   // The in-account proxy speaks its own /api/chat (orproxy forwards the path to ai-proxy);
   // a plain OpenAI-compatible URL uses the standard /chat/completions.
   const target = proxy.binding ? "https://ai-proxy/api/chat" : `${proxy.base}/chat/completions`;
@@ -200,14 +219,17 @@ function contentText(content) {
 }
 
 /** Cloudflare Workers AI, used when no proxy is configured. */
-async function askWorkersAi(env, messages) {
+async function askWorkersAi(env, messages, maxTokens = 6000) {
   const images = [];
   for (const message of messages) {
     for (const url of message.images) images.push(await imageBytes(url));
   }
   const chat = messages.map((m) => ({ role: m.role, content: m.text || "(the picture below)" }));
   const model = env.AI_MODEL || (images.length ? DEFAULT_VISION_MODEL : DEFAULT_TEXT_MODEL);
-  const out = await env.AI.run(model, images.length ? { messages: chat, image: images } : { messages: chat });
+  const out = await env.AI.run(
+    model,
+    images.length ? { messages: chat, image: images, max_tokens: maxTokens } : { messages: chat, max_tokens: maxTokens },
+  );
   const text = typeof out === "string" ? out : out && out.response;
   if (!text) throw new Error("The model returned nothing.");
   return String(text);

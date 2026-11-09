@@ -35,7 +35,8 @@
     "binding": "BROWSER"
   },
   "vars": {
-    "AI_DAILY_LIMIT": "20",
+    "AI_DAILY_LIMIT": "60",
+    "AI_MODELS": "openai/gpt-4o-mini,google/gemini-2.5-flash,anthropic/claude-sonnet-4.5,qwen/qwen2.5-vl-72b-instruct",
     // orproxy / OpenRouter. Set ORPROXY_API_KEY as a Worker secret; without it the
     // Worker falls back to Workers AI. Point ORPROXY_URL at your own proxy if it differs.
     "ORPROXY_URL": "https://openrouter.ai/api/v1",

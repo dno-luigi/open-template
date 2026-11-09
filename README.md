@@ -102,8 +102,22 @@ is the final fallback.
 `POST /api/site/<siteId>/shot` with `{ "url": "https://…" }` opens the page in
 Cloudflare Browser Run through the `BROWSER` binding and returns a JPEG data
 URL. In Recreate, **Paste a link → Screenshot the page → Detect with AI** turns
-that capture into points. Captures count against `AI_DAILY_LIMIT` (20 per IP
+that capture into points. Captures count against `AI_DAILY_LIMIT` (60 per IP
 per day by default) because each one starts a real browser.
+
+Optional capture fields: `fullPage` (default true), `width`, `height`, `scale`
+(1 or 2), and `settle` (default true, which scrolls the page so reveal and lazy
+sections render before the capture).
+
+`POST /ai` accepts an optional `model`, limited to the comma-separated
+`AI_MODELS` var (`openai/gpt-4o-mini`, `google/gemini-2.5-flash`,
+`anthropic/claude-sonnet-4.5`, `qwen/qwen2.5-vl-72b-instruct`). Compare capture
+modes and models on one page with:
+
+    npm run experiment -- https://example.com/form
+
+It writes screenshots, raw replies and `report.json` under
+`artifacts/experiments/<host>/`.
 
 `AI_DAILY_LIMIT` (default 20 per IP per day) keeps an open site from spending
 without limit. With neither configured the AI buttons report that it is not
