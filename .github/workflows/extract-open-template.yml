@@ -1,0 +1,44 @@
+
+name: Extract Open Template
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  extract:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Extract open-template.zip
+        run: |
+          if [ ! -f open-template.zip ]; then
+            echo "open-template.zip not found"
+            exit 1
+          fi
+
+          mkdir -p extracted
+          unzip -o open-template.zip -d extracted
+          cp -a extracted/. .
+          rm -rf extracted
+
+      - name: Commit extracted files
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add -A
+
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+
+          git commit -m "Extract open template"
+          git push
+          
