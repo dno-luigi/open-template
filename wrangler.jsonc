@@ -3,6 +3,7 @@
   "name": "open-template-library",
   "main": "worker/index.js",
   "compatibility_date": "2026-10-01",
+  "compatibility_flags": ["nodejs_compat"],
   "observability": {
     "enabled": true
   },
@@ -21,6 +22,13 @@
   ],
   "ai": {
     "binding": "AI"
+  },
+  // OpenAI-compatible AI proxy in this account: no OpenRouter key in this Worker.
+  "services": [
+    { "binding": "AI_PROXY", "service": "orproxy" }
+  ],
+  "browser": {
+    "binding": "BROWSER"
   },
   "vars": {
     "AI_DAILY_LIMIT": "20",

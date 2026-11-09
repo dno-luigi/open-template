@@ -7,12 +7,14 @@
 //
 //   POST /api/site/:siteId/db      { op: list | get | add | count, table, ... }
 //   POST /api/site/:siteId/ai      { messages, system }
+//   POST /api/site/:siteId/shot    { url } -> a Browser Run screenshot
 //   POST /api/site/:siteId/hit     page-view beacon (accepted, not stored)
 //   POST /api/site/:siteId/errors  client-error beacon (accepted, not stored)
 //
 // Anything else falls through to the built single-page app in ./dist.
 import { handleAi } from "./ai.js";
 import { handleDb } from "./db.js";
+import { handleShot } from "./shot.js";
 import { fail, readBody } from "./util.js";
 
 const ROUTE = /^\/api\/site\/([A-Za-z0-9_-]{1,64})\/([a-z]+)\/?$/;
@@ -46,6 +48,8 @@ export default {
           return await handleDb(request, env, body);
         case "ai":
           return await handleAi(request, env, body);
+        case "shot":
+          return await handleShot(request, env, body);
         case "hit":
         case "errors":
           // Beacons: accepted so the page never errors, deliberately not stored.

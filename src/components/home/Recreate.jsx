@@ -2,6 +2,7 @@ import { useRef, useState } from "react";
 import { Upload, Sparkles, Plus, ListPlus, ShieldCheck, AlertCircle, Check } from "lucide-react";
 import { Reveal, Dialog, toast, cn } from "@wron/kit";
 import { getCurrentDoc, isEmptyDoc } from "../templateStore";
+import { apiBase, siteId } from "../../wron-kit/runtime.js";
 import { prepareImage, IMAGE_ACCEPT } from "../imageTools";
 import { scanWithAi, describeWithAi, linesToItems, newPoint, buildDoc } from "../recreate";
 import { TextField, TextArea } from "../Field";
@@ -48,6 +49,7 @@ export default function Recreate() {
   const [mode, setMode] = useState("scan");
   const [img, setImg] = useState(null);
   const [desc, setDesc] = useState("");
+  const [link, setLink] = useState("");
   const [items, setItems] = useState([]);
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState("");
@@ -58,7 +60,7 @@ export default function Recreate() {
   const [pending, setPending] = useState(false);
   const fileRef = useRef(null);
 
-  const hasSource = (mode === "scan" && !!img) || items.length > 0;
+  const hasSource = (mode !== "describe" && !!img) || items.length > 0;
   const current = items.length > 0 ? 2 : hasSource ? 1 : 0;
 
   const load = async (file) => {
@@ -83,6 +85,29 @@ export default function Recreate() {
     if (result.title) setTitle(result.title);
     if (result.category) setCategory(result.category);
     setSelected(null);
+  };
+
+  const capture = async () => {
+    setError("");
+    setBusy(true);
+    try {
+      const res = await fetch(`${apiBase}/api/site/${siteId}/shot`, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ url: link.trim() }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.message || "That page could not be captured.");
+      const host = new URL(link.trim()).hostname;
+      setImg({ src: data.image, width: 1200, height: 1600, name: host });
+      setItems([]);
+      setSelected(null);
+      setTitle((t) => t || host);
+    } catch (err) {
+      setError(err?.message || "That page could not be captured. Check the address.");
+    } finally {
+      setBusy(false);
+    }
   };
 
   const detect = async () => {
@@ -154,6 +179,9 @@ export default function Recreate() {
               <button type="button" aria-pressed={mode === "scan"} onClick={() => setMode("scan")} className={seg(mode === "scan")}>
                 Upload a scan
               </button>
+              <button type="button" aria-pressed={mode === "link"} onClick={() => setMode("link")} className={seg(mode === "link")}>
+                Paste a link
+              </button>
               <button type="button" aria-pressed={mode === "describe"} onClick={() => setMode("describe")} className={seg(mode === "describe")}>
                 Describe it
               </button>
@@ -184,6 +212,25 @@ export default function Recreate() {
                   aria-label="Choose a picture of the form"
                   onChange={(e) => { load(e.target.files?.[0]); e.target.value = ""; }}
                 />
+              </div>
+            ) : mode === "link" ? (
+              <div className="mt-5 max-w-[720px]">
+                <TextField
+                  label="Page address"
+                  value={link}
+                  maxLength={2000}
+                  autoComplete="url"
+                  inputMode="url"
+                  placeholder="https://example.com/the-form"
+                  onChange={(e) => setLink(e.target.value)}
+                />
+                <div className="mt-4 flex flex-wrap items-center gap-3">
+                  <Button onClick={capture} disabled={busy || !link.trim()}>
+                    <Sparkles className="w-4 h-4" aria-hidden="true" />
+                    {busy ? "Capturing..." : "Screenshot the page"}
+                  </Button>
+                  <span className="text-[15px] text-muted">A headless browser opens it, then you can detect its fields.</span>
+                </div>
               </div>
             ) : (
               <div className="mt-5 max-w-[720px]">
@@ -221,16 +268,16 @@ export default function Recreate() {
             <div className="p-5 md:p-8 border-b border-line">
               <h3 className="text-[20px] font-semibold tracking-[-0.02em] text-ink">2. Plot the points</h3>
               <div className="mt-5 grid lg:grid-cols-12 gap-8">
-                {mode === "scan" && img && (
+                {mode !== "describe" && img && (
                   <div className="lg:col-span-5 min-w-0">
                     <ScanPlot img={img} items={items} selected={selected} onPlace={place} onSelect={(id) => { setSelected(id); focusPoint(id); }} />
                   </div>
                 )}
-                <div className={cn("min-w-0", mode === "scan" && img ? "lg:col-span-7" : "lg:col-span-12 max-w-[860px]")}>
+                <div className={cn("min-w-0", mode !== "describe" && img ? "lg:col-span-7" : "lg:col-span-12 max-w-[860px]")}>
                   <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
                     <p className="text-[15px] text-muted tabular-nums">{items.length} {items.length === 1 ? "point" : "points"}</p>
                     <div className="flex flex-wrap gap-2">
-                      {mode === "scan" && img && (
+                      {mode !== "describe" && img && (
                         <Button size="sm" onClick={detect} disabled={busy}>
                           <Sparkles className="w-4 h-4" aria-hidden="true" />
                           {busy ? "Reading..." : "Detect with AI"}

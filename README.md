@@ -24,6 +24,7 @@ Cloudflare Worker in this repo, so the data lives in your own account:
 | The four tables from `db/schema.json` | `worker/db.js` |
 | Community list, shares, reports, copy counts | tables `community_templates`, `shared_templates`, `template_reports`, `template_copies` |
 | AI help for Recreate (text and scans) | `worker/ai.js`, table `ai_usage` |
+| Browser screenshots for Recreate | `worker/shot.js`, `BROWSER` binding |
 | Schema and indexes | `migrations/0001_init.sql` |
 | Worker, assets and D1 binding | `wrangler.jsonc` |
 
@@ -87,25 +88,22 @@ Read the inbox and the reports with:
 ### AI help
 
 Recreate works without AI by plotting points by hand or pasting one field per
-line. The AI buttons prefer **orproxy** / OpenRouter, an OpenAI-compatible proxy:
+line. The AI buttons call this Worker, which uses the `AI_PROXY` service binding
+to this account's `orproxy` Worker (it forwards to `ai-proxy` and OpenRouter).
+No OpenRouter key is stored in this Worker.
 
-1. Set the key as a Worker secret (never in a file):
+`wrangler.jsonc` sets `ORPROXY_MODEL` (`openai/gpt-4o-mini`, a vision model) and
+`ORPROXY_URL`. A plain OpenAI-compatible URL (`ORPROXY_URL` +
+`ORPROXY_API_KEY`) still works instead of the binding, and Workers AI (`"ai"`)
+is the final fallback.
 
-       npx wrangler secret put ORPROXY_API_KEY
+### Screenshot a page
 
-   Or add it under Cloudflare → Workers → `open-template-library` → Settings →
-   Variables and Secrets → `ORPROXY_API_KEY` (type: Secret).
-2. `wrangler.jsonc` already sets `ORPROXY_URL`
-   (`https://openrouter.ai/api/v1`) and `ORPROXY_MODEL`
-   (`openai/gpt-4o-mini`, a vision model). Point `ORPROXY_URL` at your own
-   orproxy deployment if it differs; any OpenAI-compatible proxy works.
-3. Redeploy with `npm run deploy` (or push to `main` once Git is connected).
-
-`OPENAI_API_KEY` / `OPENAI_BASE_URL` are accepted as aliases, and a Cloudflare
-service binding named `AI_PROXY` is used first when present — it must answer
-`POST /chat/completions` in the OpenAI format. With no proxy configured, the
-Worker falls back to Workers AI (`"ai"` in `wrangler.jsonc`); Meta's Llama
-vision model there needs a one-time licence acceptance in Workers AI.
+`POST /api/site/<siteId>/shot` with `{ "url": "https://…" }` opens the page in
+Cloudflare Browser Run through the `BROWSER` binding and returns a JPEG data
+URL. In Recreate, **Paste a link → Screenshot the page → Detect with AI** turns
+that capture into points. Captures count against `AI_DAILY_LIMIT` (20 per IP
+per day by default) because each one starts a real browser.
 
 `AI_DAILY_LIMIT` (default 20 per IP per day) keeps an open site from spending
 without limit. With neither configured the AI buttons report that it is not

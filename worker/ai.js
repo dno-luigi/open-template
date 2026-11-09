@@ -168,17 +168,21 @@ async function askProxy(env, messages, proxy) {
   }));
 
   const body = JSON.stringify({ model, messages: openai, temperature: 0.2, max_tokens: 2000 });
-  const target = proxy.binding ? "https://ai-proxy/chat/completions" : `${proxy.base}/chat/completions`;
+  // The in-account proxy speaks its own /api/chat (orproxy forwards the path to ai-proxy);
+  // a plain OpenAI-compatible URL uses the standard /chat/completions.
+  const target = proxy.binding ? "https://ai-proxy/api/chat" : `${proxy.base}/chat/completions`;
   const res = proxy.binding
     ? await proxy.binding.fetch(new Request(target, { method: "POST", headers, body }))
     : await fetch(target, { method: "POST", headers, body });
 
   const data = await res.json().catch(() => ({}));
   if (!res.ok) {
-    const detail = (data && data.error && data.error.message) || (data && data.message) || `The AI proxy answered ${res.status}.`;
+    const detail = (data && data.error && data.error.message) || (data && data.message) || (data && data.error) || `The AI proxy answered ${res.status}.`;
     throw new Error(detail);
   }
-  const text = contentText(data && data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content);
+  const text = contentText(
+    data && (data.text ?? (data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content)),
+  );
   if (!text) throw new Error("The model returned nothing.");
   return text;
 }
