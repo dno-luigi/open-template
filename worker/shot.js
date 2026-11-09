@@ -64,7 +64,7 @@ export async function handleShot(request, env, body) {
 
   let browser;
   try {
-    browser = await launch(env.BROWSER);
+    browser = await launchWithRetry(env.BROWSER);
     const page = await browser.newPage({ viewport: { width, height }, deviceScaleFactor: scale });
     const response = await page.goto(target.href, { waitUntil: "networkidle", timeout: 30_000 });
     if (!response || response.status() >= 400) {
@@ -110,9 +110,11 @@ export async function handleShot(request, env, body) {
         .bind(crypto.randomUUID(), ipHash, day, nowIso())
         .run();
     }
+    const title = await page.title().catch(() => "");
     return json({
       image: `data:image/jpeg;base64,${toBase64(buffer)}`,
       url: target.href,
+      title: String(title || "").slice(0, 200),
       width,
       height,
       fullPage,
@@ -124,6 +126,19 @@ export async function handleShot(request, env, body) {
   } finally {
     if (browser) await browser.close().catch(() => {});
   }
+}
+
+async function launchWithRetry(binding, attempts = 2) {
+  let last;
+  for (let i = 0; i < attempts; i += 1) {
+    try {
+      return await launch(binding);
+    } catch (err) {
+      last = err;
+      if (i + 1 < attempts) await new Promise((resolve) => setTimeout(resolve, 1500));
+    }
+  }
+  throw last;
 }
 
 function toBase64(buffer) {

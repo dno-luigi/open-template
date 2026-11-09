@@ -119,6 +119,18 @@ modes and models on one page with:
 It writes screenshots, raw replies and `report.json` under
 `artifacts/experiments/<host>/`.
 
+### Cheap two-stage capture
+
+    npm run pipeline -- https://example.com/form [visionModel] [extractModel]
+
+Captures the page, asks a budget vision model for blocks with fractional
+coordinates, and only runs the second (text) model when the first reply is not
+usable JSON. Reports, screenshots and raw replies land in
+`artifacts/pipeline/<host>/`. Budget picks that worked: `google/gemini-2.5-flash-lite`
+(fastest, cents per thousand pages), `deepseek/deepseek-v4.1-flash-1017`
+(cheapest), `openai/gpt-5-nano` (slowest, best at headings), and
+`inference-net/schematron-v2-turbo` as the JSON-only fallback.
+
 `AI_DAILY_LIMIT` (default 20 per IP per day) keeps an open site from spending
 without limit. With neither configured the AI buttons report that it is not
 connected; nothing else breaks.
