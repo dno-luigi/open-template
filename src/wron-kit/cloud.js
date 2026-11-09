@@ -7,10 +7,10 @@
 //   payments  checkout(...) / useCart()             -> Stripe checkout on the owner's account
 //   ai        ai.chat(...)                          -> the owner's connected AI key
 //
-// Every call goes to Wron at /api/site/<siteId>/<action>. Who may read or write a
-// table is declared per table in db/schema.json and enforced on the server; this
-// file only carries requests. Nothing secret is in here: a published page's
-// source is public.
+// Every call goes to this site's own Worker at /api/site/<siteId>/<action>. Who
+// may read or write a table is enforced by worker/db.js on the server; this file
+// only carries requests. Nothing secret is in here: a published page's source is
+// public.
 import { createElement, useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { apiBase, isPreview, isServer, previewPass, siteId, storage } from "./runtime.js";
 

@@ -12,7 +12,7 @@ import { Toaster } from "./wron-kit/ui.jsx";
 import { reportError, recordVisit } from "./wron-kit/cloud.js";
 import { startEditorMotion } from "./wron-kit/editor-motion.js";
 
-const boot = window.__WRON__ || {};
+const boot = window.__SITE__ || window.__WRON__ || {};
 const useIsoLayoutEffect = typeof window === "undefined" ? useEffect : useLayoutEffect;
 
 // ── Errors ──────────────────────────────────────────────────────────────────
@@ -57,7 +57,7 @@ class PageBoundary extends Component {
           <div style={{ maxWidth: 520, textAlign: "center" }}>
             <p style={{ fontSize: 13, letterSpacing: ".08em", textTransform: "uppercase", opacity: .55, margin: 0 }}>This page hit an error</p>
             <p style={{ fontSize: 16, margin: "12px 0 0", lineHeight: 1.5 }}>{describe(this.state.error).message}</p>
-            <p style={{ fontSize: 13, opacity: .6, margin: "12px 0 0" }}>Press Fix in the builder and Wron will repair it.</p>
+            <p style={{ fontSize: 13, opacity: .6, margin: "12px 0 0" }}>Press Reload and try again.</p>
           </div>
         </div>
       );
@@ -180,7 +180,7 @@ function Shell({ children }) {
 
 function Root() {
   const Router = isPreview ? MemoryRouter : BrowserRouter;
-  // A site served under a path (wron.ai/s/<name>/ before it has its own domain) routes below that prefix.
+  // A site served under a path routes below that prefix.
   const routerProps = isPreview ? { initialEntries: [boot.path || "/"] } : boot.base ? { basename: boot.base } : {};
   return (
     <StrictMode>

@@ -1,6 +1,6 @@
 // Community sharing, no account needed.
 // Shares go to the owner's "shared_templates" inbox table first (spam and abuse protection),
-// and appear in the public "community_templates" list once the owner publishes them in Wron.
+// and appear in the public "community_templates" list once the owner publishes them from D1.
 // Reports and copies are logged as their own rows.
 import { table } from "@wron/kit";
 import { TABLES } from "../data/site";

@@ -30,10 +30,9 @@ export const STATUS = {
 };
 
 // Still picture of the paper, used as the 3D poster and the no-WebGL fallback.
-export const PAPER_POSTER =
-  "https://firebasestorage.googleapis.com/v0/b/wron-ai.firebasestorage.app/o/site-assets%2Fsite-1793848279712%2F43a20c54-4da9-44bb-b004-d13cad478eab.webp?alt=media&token=717459c0-4636-4922-aec3-f4843edf6240";
+export const PAPER_POSTER = "/paper-poster.webp";
 
-// Wron Cloud tables (see db/schema.json)
+// Cloudflare D1 tables (see migrations/0001_init.sql and db/schema.json)
 export const TABLES = {
   community: "community_templates", // public: published community templates
   submissions: "shared_templates", // submit: shares from visitors, no account needed

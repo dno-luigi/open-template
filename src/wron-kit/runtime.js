@@ -5,17 +5,20 @@
 // src/lib/app-kit.ts ships a kit inside every generated app. The model never
 // writes them and cannot change them; it imports them as "@wron/kit".
 //
-// The compiler writes window.__WRON__ into the page head before the bundle runs:
-//   mode     "preview" inside the builder's iframe, "live" on a published site
+// index.html writes window.__SITE__ into the page head before the bundle runs:
+//   mode     "preview" inside a builder's iframe, "live" on a published site
 //   siteId   the project the site belongs to (its backend is keyed on it)
-//   api      the Wron origin the site's backend calls go to
+//   api      the origin the site's backend calls go to (this site's own Worker)
 //   key      the site's public key for those calls (never a secret)
 //   path     the route a preview should open on
 // During prerendering there is no window at all, which is its own mode.
 
-// In the browser the page wrote window.__WRON__; when the site is rendered ahead of time there
-// is no window, and the renderer sets the same object on its global instead (prerender.ts).
-const boot = (typeof window !== "undefined" ? window.__WRON__ : typeof globalThis !== "undefined" ? globalThis.__WRON__ : null) || {};
+// __WRON__ is still read as a fallback so older exports keep booting.
+const boot = (typeof window !== "undefined"
+  ? window.__SITE__ || window.__WRON__
+  : typeof globalThis !== "undefined"
+    ? globalThis.__SITE__ || globalThis.__WRON__
+    : null) || {};
 
 export const isServer = typeof window === "undefined";
 export const isPreview = !isServer && boot.mode === "preview";

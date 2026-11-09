@@ -8,7 +8,10 @@ import { useEffect } from "react";
 import { isServer } from "./runtime.js";
 
 function siteInfo() {
-  const info = typeof window !== "undefined" ? window.__WRON__ && window.__WRON__.site : globalThis.__WRON_SITE__;
+  const info =
+    typeof window !== "undefined"
+      ? (window.__SITE__ || window.__WRON__)?.site
+      : globalThis.__SITE__?.site || globalThis.__WRON_SITE__;
   return info || {};
 }
 
