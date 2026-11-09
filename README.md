@@ -88,9 +88,9 @@ Read the inbox and the reports with:
 ### AI help
 
 Recreate works without AI by plotting points by hand or pasting one field per
-line. The AI buttons call this Worker, which uses the `AI_PROXY` service binding
-to this account's `orproxy` Worker (it forwards to `ai-proxy` and OpenRouter).
-No OpenRouter key is stored in this Worker.
+line. The AI buttons call this Worker, which uses the `AI-PROXY` service binding
+to this account's `ai-proxy` Worker (an `ORPROXY` binding to the orproxy entry
+point is also declared). No OpenRouter key is stored in this Worker.
 
 `wrangler.jsonc` sets `ORPROXY_MODEL` (`openai/gpt-4o-mini`, a vision model) and
 `ORPROXY_URL`. A plain OpenAI-compatible URL (`ORPROXY_URL` +

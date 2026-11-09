@@ -23,10 +23,14 @@
   "ai": {
     "binding": "AI"
   },
-  // OpenAI-compatible AI proxy in this account: no OpenRouter key in this Worker.
-  "services": [
-    { "binding": "AI_PROXY", "service": "orproxy" }
-  ],
+  // OpenAI-compatible AI proxies in this account: no OpenRouter key in this Worker.
+  // Hyphenated names are read with bracket access in the Worker (env["AI-PROXY"]).
+  "unsafe": {
+    "bindings": [
+      { "name": "AI-PROXY", "type": "service", "service": "ai-proxy", "environment": "production" },
+      { "name": "ORPROXY", "type": "service", "service": "orproxy", "environment": "production" }
+    ]
+  },
   "browser": {
     "binding": "BROWSER"
   },

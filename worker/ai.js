@@ -3,8 +3,8 @@
 // Providers, in the order they are used, all on your own account, never Wron's:
 //
 //   orproxy / OpenRouter / any OpenAI-compatible proxy
-//     ORPROXY_URL + ORPROXY_API_KEY secrets/vars, or an AI_PROXY service binding
-//     (the binding is called as POST /chat/completions with an OpenAI body)
+//     the AI-PROXY or ORPROXY service binding (called as POST /api/chat), or
+//     ORPROXY_URL + ORPROXY_API_KEY for a plain /chat/completions URL
 //   Workers AI
 //     the "ai" binding in wrangler.jsonc, used when no proxy is configured
 //
@@ -22,9 +22,14 @@ const DEFAULT_PROXY_MODEL = "openai/gpt-4o-mini";
 const MAX_IMAGE_BYTES = 4 * 1024 * 1024;
 const MAX_IMAGES = 2;
 
+function proxyBinding(env) {
+  // Names match wrangler.jsonc; AI_PROXY is kept for older configurations.
+  return env["AI-PROXY"] || env.AI_PROXY || env.ORPROXY || null;
+}
+
 function proxyConfig(env) {
   return {
-    binding: env.AI_PROXY || null,
+    binding: proxyBinding(env),
     key: env.ORPROXY_API_KEY || env.OPENAI_API_KEY || "",
     base: String(env.ORPROXY_URL || env.OPENAI_BASE_URL || "").replace(/\/+$/, ""),
     model: env.ORPROXY_MODEL || env.AI_MODEL || "",
