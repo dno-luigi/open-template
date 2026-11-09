@@ -87,11 +87,21 @@ Read the inbox and the reports with:
 ### AI help
 
 Recreate works without AI by plotting points by hand or pasting one field per
-line. To enable the AI buttons, pick one, on your own account:
+line. The AI buttons run on Cloudflare Workers AI (the `"ai"` binding in
+`wrangler.jsonc`). The vision model that reads scans is Llama 3.2, which Meta
+gates behind a one-time licence acceptance on the account. Accept it once:
 
-- Workers AI: uncomment `"ai": { "binding": "AI" }` in `wrangler.jsonc`.
-- An OpenAI-compatible key: `npx wrangler secret put OPENAI_API_KEY`, and
-  optionally `OPENAI_BASE_URL` / `AI_MODEL` (defaults to OpenAI and `gpt-4o-mini`).
+- In the Cloudflare dashboard: **Workers AI → Models → Llama 3.2 11B Vision →
+  Agree**, or
+- From a terminal with your account id and API token set:
+
+      curl -X POST "https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/ai/run/@cf/meta/llama-3.2-11b-vision-instruct" \
+        -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+        -H "content-type: application/json" -d '{"prompt":"agree"}'
+
+To use an OpenAI-compatible provider instead, remove the `"ai"` binding and run
+`npx wrangler secret put OPENAI_API_KEY` (optionally `OPENAI_BASE_URL` /
+`AI_MODEL`, defaults to OpenAI and `gpt-4o-mini`).
 
 `AI_DAILY_LIMIT` (default 20 per IP per day) keeps an open site from spending
 without limit. With neither configured the AI buttons report that it is not

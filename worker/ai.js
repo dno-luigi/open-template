@@ -99,6 +99,15 @@ export async function handleAi(request, env, body) {
     text = await ask(env, messages);
   } catch (err) {
     console.error("ai failed:", err && err.stack ? err.stack : err);
+    const detail = String((err && err.message) || "");
+    // Workers AI gates the Llama vision model behind a one-time licence acceptance.
+    if (/5016|submit the prompt ['\"]?agree/i.test(detail)) {
+      return fail(
+        502,
+        "ai_license",
+        "The vision model needs its licence accepted once on this Cloudflare account (Workers AI, or the agree call in README.md).",
+      );
+    }
     return fail(502, "ai_failed", "The form could not be read right now. Try again, or plot the points by hand.");
   }
 
