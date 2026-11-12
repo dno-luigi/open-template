@@ -149,7 +149,7 @@ function particlePositions(count, spread, shape) {
   return out;
 }
 
-/** A field of points: <Particles count={2000} color="#D9FF43" shape="galaxy" />. shape: sphere | box | disc | galaxy */
+/** A field of points: <Particles count={2000} color="#E8B100" shape="galaxy" />. shape: sphere | box | disc | galaxy */
 export function Particles({ count = 1500, color = "#ffffff", size = 0.025, spread = 7, shape = "sphere", spin = 0.04, follow = 0.25, opacity = 0.9, position }) {
   const { small, reduce } = useScene();
   const n = small ? Math.round(count * 0.5) : count;
@@ -192,7 +192,7 @@ void main() {
   gl_FragColor = vec4(uColor, uOpacity * (0.45 + 0.55 * smoothstep(-1.2, 1.2, vH)));
 }`;
 
-/** A rolling surface of dots, seen at an angle: <Waves color="#D9FF43" />. */
+/** A rolling surface of dots, seen at an angle: <Waves color="#E8B100" />. */
 export function Waves({ color = "#ffffff", density = 120, width = 14, depth = 10, amplitude = 0.45, frequency = 0.55, speed = 0.6, size = 2.2, opacity = 0.85, position = [0, -1.2, 0], rotation = [-Math.PI / 2.6, 0, 0] }) {
   const { small, reduce } = useScene();
   const d = small ? Math.round(density * 0.6) : density;
@@ -291,9 +291,9 @@ function GradientQuad({ colors, speed, grain }) {
   );
 }
 
-/** A living mesh gradient, full-bleed behind content: <GradientBackground colors={["#0b1020","#154BFF","#E9E1D2","#11110F"]} className="absolute inset-0" /> */
+/** A living mesh gradient, full-bleed behind content: <GradientBackground colors={["#101814","#14795A","#E2E4DE","#121A14"]} className="absolute inset-0" /> */
 /** The inside of <GradientBackground>. */
-export function Gradient({ colors = ["#0b1020", "#3a2cff", "#ff6a3d", "#f4efe6"], speed = 0.35, grain = 0.06 }) {
+export function Gradient({ colors = ["#101814", "#0F6B4F", "#E8B100", "#F1F2EE"], speed = 0.35, grain = 0.06 }) {
   return <GradientQuad colors={colors} speed={speed} grain={grain} />;
 }
 

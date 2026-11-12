@@ -64,7 +64,7 @@ export function Checkbox({ label, className, id, ...rest }) {
   const fid = id || auto;
   return (
     <label htmlFor={fid} className={cn("flex items-start gap-3 min-h-[44px] py-2 cursor-pointer text-[15px] text-ink", className)}>
-      <input id={fid} type="checkbox" className="mt-0.5 w-5 h-5 shrink-0 accent-[#5B3DF5]" {...rest} />
+      <input id={fid} type="checkbox" className="mt-0.5 w-5 h-5 shrink-0 accent-[#0F6B4F]" {...rest} />
       <span>{label}</span>
     </label>
   );

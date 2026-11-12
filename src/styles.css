@@ -3,7 +3,7 @@
 @tailwind components;
 @tailwind utilities;
 
-:root { --c-bg: 255 255 255; --c-surface: 245 243 255; --c-ink: 20 16 38; --c-muted: 97 91 115; --c-line: 230 226 242; --c-primary: 91 61 245; --c-primary-ink: 255 255 255; --c-accent: 255 122 69; --font-display: "Hanken Grotesk", ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif; --font-body: "Hanken Grotesk", ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif; --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace; --radius: 12px; color-scheme: light; }
+:root { --c-bg: 251 251 249; --c-surface: 241 242 238; --c-ink: 18 26 20; --c-muted: 94 102 96; --c-line: 226 228 222; --c-primary: 15 107 79; --c-primary-ink: 255 255 255; --c-accent: 232 177 0; --font-display: "Hanken Grotesk", ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif; --font-body: "Hanken Grotesk", ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif; --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace; --radius: 10px; color-scheme: light; }
 
 @layer base {
 html { -webkit-text-size-adjust: 100%; text-rendering: optimizeLegibility; }

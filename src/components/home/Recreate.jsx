@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import { Upload, Sparkles, Plus, ListPlus, ShieldCheck, AlertCircle, Check } from "lucide-react";
-import { Reveal, Dialog, toast, cn } from "@wron/kit";
-import { getCurrentDoc, isEmptyDoc } from "../templateStore";
+import { Reveal, toast, cn } from "@wron/kit";
+import { getCurrentDoc, isEmptyDoc, useDeviceTemplates } from "../templateStore";
 import { apiBase, siteId } from "../../wron-kit/runtime.js";
 import { prepareImage, IMAGE_ACCEPT } from "../imageTools";
 import { scanWithAi, describeWithAi, linesToItems, newPoint, buildDoc } from "../recreate";
@@ -46,6 +46,7 @@ const seg = (on) =>
 
 export default function Recreate() {
   const { openDoc } = useDocActions();
+  const { save } = useDeviceTemplates();
   const [mode, setMode] = useState("scan");
   const [img, setImg] = useState(null);
   const [desc, setDesc] = useState("");
@@ -57,7 +58,6 @@ export default function Recreate() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [over, setOver] = useState(false);
-  const [pending, setPending] = useState(false);
   const fileRef = useRef(null);
 
   const hasSource = (mode !== "describe" && !!img) || items.length > 0;
@@ -151,11 +151,19 @@ export default function Recreate() {
   const change = (id, patch) => setItems((l) => l.map((i) => (i.id === id ? { ...i, ...patch } : i)));
   const remove = (id) => setItems((l) => l.filter((i) => i.id !== id));
 
-  const finish = () => {
-    setPending(false);
+  const finish = () =>
     openDoc(buildDoc(items, { title, category }), "Your template is ready. Fill in the fields.");
+
+  // The handoff never asks a question. A page already sitting in the editor is
+  // saved to this device first, so nothing is lost and nothing blocks the step.
+  const use = () => {
+    const current = getCurrentDoc();
+    if (!isEmptyDoc(current)) {
+      save(current);
+      toast("Your previous page was saved on this device");
+    }
+    finish();
   };
-  const use = () => (isEmptyDoc(getCurrentDoc()) ? finish() : setPending(true));
 
   return (
     <section id="recreate" aria-labelledby="recreate-title" className="page-x max-w-[1600px] mx-auto pt-14 md:pt-20 pb-4 scroll-mt-24">
@@ -325,13 +333,6 @@ export default function Recreate() {
         </div>
       </Reveal>
 
-      <Dialog open={pending} onClose={() => setPending(false)} title="Replace the page in the editor?" panelClassName="bg-bg">
-        <p className="text-[16px] text-muted">The editor holds work that is not saved as a template. Save it first if you want to keep it.</p>
-        <div className="mt-6 flex flex-wrap justify-end gap-3">
-          <Button variant="outline" onClick={() => setPending(false)}>Keep editing</Button>
-          <Button onClick={finish}>Replace it</Button>
-        </div>
-      </Dialog>
     </section>
   );
 }

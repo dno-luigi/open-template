@@ -92,7 +92,7 @@ function drawPaper(ctx, doc, step, mode, onLoad) {
     if (l.kind === "blank") { y += 11 * 1.3 * k; continue; }
     if (l.kind === "rule") {
       y += 3 * k;
-      ctx.fillStyle = "#141026";
+      ctx.fillStyle = "#121A14";
       ctx.fillRect(m, y, maxW, hair);
       y += 6 * k;
       continue;
@@ -110,7 +110,7 @@ function drawPaper(ctx, doc, step, mode, onLoad) {
     const v = SPEC[l.variant] || SPEC.body;
     const size = v.s * k;
     ctx.font = `${v.b ? 700 : 400} ${size}px ${fam}`;
-    ctx.fillStyle = l.kind === "field" && !l.filled ? "#5B3DF5" : "#141026";
+    ctx.fillStyle = l.kind === "field" && !l.filled ? "#0F6B4F" : "#121A14";
     if (l.variant === "heading") y += 6 * k;
     const align = l.align || "left";
     ctx.textAlign = align;
@@ -121,7 +121,7 @@ function drawPaper(ctx, doc, step, mode, onLoad) {
       ctx.fillText(line, x, y - size * 0.28);
     }
     if (l.variant === "heading") {
-      ctx.fillStyle = "#141026";
+      ctx.fillStyle = "#121A14";
       ctx.fillRect(m, y + 1.5 * k, maxW, hair);
       y += 4 * k;
     }

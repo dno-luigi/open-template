@@ -166,8 +166,8 @@ export function Scene({
 
 const loadGradient = () => import("./three-objects.jsx").then((m) => ({ default: m.Gradient }));
 
-/** A living mesh gradient, full-bleed behind content: <GradientBackground colors={["#0b1020","#154BFF","#E9E1D2","#11110F"]} /> */
-export function GradientBackground({ colors = ["#0b1020", "#3a2cff", "#ff6a3d", "#f4efe6"], speed = 0.35, grain = 0.06, className, style, poster }) {
+/** A living mesh gradient, full-bleed behind content: <GradientBackground colors={["#101814","#14795A","#E2E4DE","#121A14"]} /> */
+export function GradientBackground({ colors = ["#101814", "#0F6B4F", "#E8B100", "#F1F2EE"], speed = 0.35, grain = 0.06, className, style, poster }) {
   const fallback = poster || <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${colors.join(", ")})` }} />;
   const sceneProps = useMemo(() => ({ colors, speed, grain }), [colors, speed, grain]);
   return (

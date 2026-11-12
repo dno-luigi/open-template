@@ -20,7 +20,7 @@ export default function Hero() {
               <button
                 type="button"
                 onClick={() => scrollToSection("recreate")}
-                className={`${btn} bg-primary text-primary-ink border-primary hover:bg-[#4A2DE0] hover:border-[#4A2DE0]`}
+                className={`${btn} bg-primary text-primary-ink border-primary hover:bg-[#0B5540] hover:border-[#0B5540]`}
               >
                 Recreate a form
               </button>

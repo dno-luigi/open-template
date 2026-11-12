@@ -6,20 +6,20 @@
   "image": "/paper-poster.webp",
   "theme": {
     "colors": {
-      "bg": "#FFFFFF",
-      "surface": "#F5F3FF",
-      "ink": "#141026",
-      "muted": "#615B73",
-      "line": "#E6E2F2",
-      "primary": "#5B3DF5",
+      "bg": "#FBFBF9",
+      "surface": "#F1F2EE",
+      "ink": "#121A14",
+      "muted": "#5E6660",
+      "line": "#E2E4DE",
+      "primary": "#0F6B4F",
       "primaryInk": "#FFFFFF",
-      "accent": "#FF7A45"
+      "accent": "#E8B100"
     },
     "fonts": {
       "display": "Hanken Grotesk",
       "body": "Hanken Grotesk"
     },
-    "radius": "12px",
+    "radius": "10px",
     "scheme": "light"
   }
 }

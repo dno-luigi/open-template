@@ -5,7 +5,7 @@ import { cn } from "@wron/kit";
 // Buttons: violet primary, violet outline, quiet ghost, and danger for delete.
 // 150ms fill/border change, press down by 1px.
 const VARIANTS = {
-  primary: "bg-primary text-primary-ink border border-primary hover:bg-[#4A2DE0] hover:border-[#4A2DE0]",
+  primary: "bg-primary text-primary-ink border border-primary hover:bg-[#0B5540] hover:border-[#0B5540]",
   outline: "bg-bg text-primary border border-primary/60 hover:border-primary hover:bg-surface",
   ghost: "bg-transparent text-ink border border-transparent hover:bg-surface",
   soft: "bg-surface text-ink border border-line hover:border-primary/40",

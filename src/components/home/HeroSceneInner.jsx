@@ -8,7 +8,7 @@ export default function HeroSceneInner() {
       poster={PAPER_POSTER}
       className="absolute inset-0"
       lighting="soft"
-      accent="#5B3DF5"
+      accent="#0F6B4F"
       camera={{ position: [0, 0, 6.4], fov: 33 }}
       mobile="lite"
     />
