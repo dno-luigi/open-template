@@ -2,8 +2,8 @@
   html { -webkit-text-size-adjust: 100%; }
   html, body, #root { width: 100%; max-width: 100%; overflow-x: clip; }
   body { font-size: 16px; line-height: 1.5; }
-  :focus-visible { outline: 2px solid #5B3DF5; outline-offset: 2px; border-radius: 4px; }
-  ::selection { background: #E2DBFF; color: #141026; }
+  :focus-visible { outline: 2px solid #0F6B4F; outline-offset: 2px; border-radius: 4px; }
+  ::selection { background: #D8E6DE; color: #121A14; }
 }
 
 @layer components {
@@ -26,12 +26,12 @@
   @media (min-width: 1200px) { .page-x { padding-left: 64px; padding-right: 64px; } }
 
   @keyframes status-pulse {
-    0% { box-shadow: 0 0 0 0 rgba(91, 61, 245, 0.35); }
-    100% { box-shadow: 0 0 0 10px rgba(91, 61, 245, 0); }
+    0% { box-shadow: 0 0 0 0 rgba(15, 107, 79, 0.35); }
+    100% { box-shadow: 0 0 0 10px rgba(15, 107, 79, 0); }
   }
   .status-pulse { animation: status-pulse 700ms ease-out 1; }
 
-  @keyframes row-tint { from { background-color: #EEEAFE; } to { background-color: transparent; } }
+  @keyframes row-tint { from { background-color: #EAF0EC; } to { background-color: transparent; } }
   .row-tint { animation: row-tint 1200ms ease-out 1; }
 
   @media (prefers-reduced-motion: reduce) {
@@ -47,8 +47,8 @@
   font-size: 1.797cqw;
   line-height: 1.3;
   min-height: 129.41cqw;
-  border: 1px solid #E6E2F2;
-  box-shadow: 0 1px 2px rgba(20, 16, 38, 0.05), 0 22px 44px -22px rgba(91, 61, 245, 0.28);
+  border: 1px solid #E2E4DE;
+  box-shadow: 0 1px 2px rgba(18, 26, 20, 0.05), 0 22px 44px -22px rgba(15, 107, 79, 0.28);
   overflow-wrap: anywhere;
 }
 .sheet-serif { font-family: "Times New Roman", Times, "Liberation Serif", serif; }
@@ -60,7 +60,7 @@
 .sl-bold { font-weight: 700; }
 .sl-name { font-size: 2em; font-weight: 700; line-height: 1.15; }
 .sl-heading { font-weight: 700; border-bottom: 1px solid #111; margin-top: 0.45em; margin-bottom: 0.25em; padding-bottom: 0.05em; }
-.sl-empty { color: #5B3DF5; }
+.sl-empty { color: #0F6B4F; }
 .sl-blank { height: 1.3em; }
 .sl-rule { border: 0; border-top: 1px solid #111; margin: 0.4em 0 0.5em; height: 0; }
-.sl-hint { color: #615B73; text-align: center; padding: 18% 8%; font-family: "Hanken Grotesk", system-ui, sans-serif; }
+.sl-hint { color: #5E6660; text-align: center; padding: 18% 8%; font-family: "Hanken Grotesk", system-ui, sans-serif; }
