@@ -18,7 +18,7 @@ const addBtn =
 
 export default function EditorControls() {
   const { doc, setDoc, update, updateBlock, addBlock, removeBlock, moveBlock } = useCurrentDoc();
-  const { newDocument } = useDocActions();
+  const { newDocument, pdfNow, saveNow } = useDocActions();
   const [focusId, setFocusId] = useState(null);
   const [other, setOther] = useState(false);
   const [confirmNew, setConfirmNew] = useState(false);
@@ -91,6 +91,17 @@ export default function EditorControls() {
           </h2>
           <p className="mt-1 text-[18px] md:text-[15px] text-muted truncate">{doc.title?.trim() || "Untitled template"}</p>
           {doc.source && <p className="t-meta text-muted mt-1">Copied from the community</p>}
+          {!isEmptyDoc(doc) && (
+            <div className="mt-4 flex flex-wrap gap-2.5">
+              <Button size="sm" onClick={() => pdfNow()}>
+                <Download className="w-4 h-4" aria-hidden="true" />
+                Download PDF
+              </Button>
+              <Button size="sm" variant="outline" onClick={saveNow}>
+                Save to this device
+              </Button>
+            </div>
+          )}
         </div>
         {!isEmptyDoc(doc) && (
           <button

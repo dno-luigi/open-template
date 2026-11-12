@@ -47,7 +47,7 @@ const seg = (on) =>
 export default function Recreate() {
   const { openDoc } = useDocActions();
   const { save } = useDeviceTemplates();
-  const [mode, setMode] = useState("scan");
+  const [mode, setMode] = useState("describe");
   const [img, setImg] = useState(null);
   const [desc, setDesc] = useState("");
   const [link, setLink] = useState("");
@@ -122,6 +122,30 @@ export default function Recreate() {
     }
   };
 
+  // The easy path: describe it once, get the document. No points to place.
+  const generate = async () => {
+    setError("");
+    setBusy(true);
+    try {
+      const result = await describeWithAi(desc);
+      openDoc(
+        buildDoc(result.items, { title: result.title, category: result.category }),
+        "Your document is ready. Fill it in and download the PDF."
+      );
+      // The document grows as it is laid out, so land on its title rather than
+      // on a section top that was measured before the content existed.
+      setTimeout(() => {
+        const title = document.getElementById("doc-title");
+        if (title) title.scrollIntoView({ block: "center", behavior: "smooth" });
+        title?.focus({ preventScroll: true });
+      }, 450);
+    } catch (err) {
+      setError((err?.message || "That did not work.") + " You can use each line as a field instead.");
+    } finally {
+      setBusy(false);
+    }
+  };
+
   const draft = async () => {
     setError("");
     setBusy(true);
@@ -176,22 +200,24 @@ export default function Recreate() {
 
       <Reveal y={12} className="mt-8 md:mt-10">
         <div className="rounded-theme border border-line bg-bg">
-          <div className="p-5 md:p-8 border-b border-line">
-            <Steps current={current} />
-          </div>
+          {mode !== "describe" || items.length > 0 ? (
+            <div className="p-5 md:p-8 border-b border-line">
+              <Steps current={current} />
+            </div>
+          ) : null}
 
           {/* 1. Add */}
           <div className="p-5 md:p-8 border-b border-line">
-            <h3 className="text-[20px] font-semibold tracking-[-0.02em] text-ink">1. Add the form</h3>
+            <h3 className="text-[20px] font-semibold tracking-[-0.02em] text-ink">1. Say what document you need</h3>
             <div className="mt-4 flex flex-wrap gap-2.5" role="group" aria-label="How to add the form">
+              <button type="button" aria-pressed={mode === "describe"} onClick={() => setMode("describe")} className={seg(mode === "describe")}>
+                Describe it
+              </button>
               <button type="button" aria-pressed={mode === "scan"} onClick={() => setMode("scan")} className={seg(mode === "scan")}>
                 Upload a scan
               </button>
               <button type="button" aria-pressed={mode === "link"} onClick={() => setMode("link")} className={seg(mode === "link")}>
                 Paste a link
-              </button>
-              <button type="button" aria-pressed={mode === "describe"} onClick={() => setMode("describe")} className={seg(mode === "describe")}>
-                Describe it
               </button>
             </div>
 
@@ -250,16 +276,20 @@ export default function Recreate() {
                   placeholder="A small claims form with the parties, case number, hearing date, what happened and what I am asking for."
                   onChange={(e) => setDesc(e.target.value)}
                 />
-                <div className="mt-4 flex flex-wrap gap-3">
-                  <Button onClick={draft} disabled={busy || !desc.trim()}>
+                <div className="mt-4 flex flex-wrap items-center gap-3">
+                  <Button size="lg" onClick={generate} disabled={busy || !desc.trim()}>
                     <Sparkles className="w-4 h-4" aria-hidden="true" />
-                    {busy ? "Drafting..." : "Draft with AI"}
+                    {busy ? "Writing the document..." : "Generate the document"}
                   </Button>
                   <Button variant="outline" disabled={busy || !desc.trim()} onClick={() => { setItems(linesToItems(desc)); setSelected(null); setError(""); }}>
                     <ListPlus className="w-4 h-4" aria-hidden="true" />
                     Use each line as a field
                   </Button>
                 </div>
+                <p className="mt-3 text-[15px] text-muted max-w-[64ch]">
+                  Generating skips the plotting: the whole document opens in the editor, where every field is still
+                  editable and the PDF is one press away. Plotting is there when you want to place each point yourself.
+                </p>
               </div>
             )}
 

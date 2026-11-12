@@ -1,7 +1,7 @@
 import { lazy, Suspense, useEffect, useState } from "react";
 import { motion, useReducedMotion } from "motion/react";
 import { Laptop, Users, AlertCircle } from "lucide-react";
-import { Reveal, cn } from "@wron/kit";
+import { cn } from "@wron/kit";
 import { useCurrentDoc } from "../templateStore";
 import Button from "../Button";
 import { STATUS, LEGAL_NOTE_DEMAND } from "../../data/site";
@@ -44,7 +44,7 @@ export default function Editor() {
 
   return (
     <section id="editor" aria-labelledby="editor-title" className="page-x max-w-[1600px] mx-auto pt-4 lg:pt-10 scroll-mt-20">
-      <Reveal y={12}>
+      <div>
         <div className="rounded-theme border border-line bg-bg">
           <div className="grid lg:grid-cols-12">
             <div className="lg:col-span-4 min-w-0">
@@ -94,7 +94,7 @@ export default function Editor() {
             )}
           </div>
         </div>
-      </Reveal>
+      </div>
       {shareLoaded && (
         <Suspense fallback={null}>
           <SharePanel />
