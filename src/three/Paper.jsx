@@ -250,7 +250,7 @@ export default function Paper() {
     <>
       <ambientLight intensity={1.1} />
       <directionalLight position={[-2, 3, 5]} intensity={1.8} />
-      <pointLight position={[3, -1, 2.5]} color="#7B61FF" intensity={0.3} />
+      <pointLight position={[3, -1, 2.5]} color="#0F6B4F" intensity={0.3} />
       <group ref={group} position={[0, 0.12, 0]}>
         <mesh geometry={parts.geo}>
           <meshStandardMaterial
@@ -277,7 +277,7 @@ export default function Paper() {
           />
         </mesh>
       </group>
-      <ContactShadows position={[0, -1.7, 0]} scale={6} blur={2.6} far={3} opacity={0.32} color="#4B3BB0" />
+      <ContactShadows position={[0, -1.7, 0]} scale={6} blur={2.6} far={3} opacity={0.32} color="#123124" />
     </>
   );
 }

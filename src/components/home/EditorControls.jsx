@@ -19,6 +19,12 @@ const addBtn =
 export default function EditorControls() {
   const { doc, setDoc, update, updateBlock, addBlock, removeBlock, moveBlock } = useCurrentDoc();
   const { newDocument, pdfNow, saveNow } = useDocActions();
+  // Carry the audit through the funnel, so payment knows exactly what it is selling.
+  const auditQuery = (() => {
+    if (typeof window === "undefined") return "";
+    const id = new URLSearchParams(window.location.search).get("audit");
+    return id ? `?audit=${encodeURIComponent(id)}` : "";
+  })();
   const [focusId, setFocusId] = useState(null);
   const [other, setOther] = useState(false);
   const [confirmNew, setConfirmNew] = useState(false);
@@ -92,14 +98,22 @@ export default function EditorControls() {
           <p className="mt-1 text-[18px] md:text-[15px] text-muted truncate">{doc.title?.trim() || "Untitled template"}</p>
           {doc.source && <p className="t-meta text-muted mt-1">Copied from the community</p>}
           {!isEmptyDoc(doc) && (
-            <div className="mt-4 flex flex-wrap gap-2.5">
-              <Button size="sm" onClick={() => pdfNow()}>
-                <Download className="w-4 h-4" aria-hidden="true" />
-                Download PDF
-              </Button>
-              <Button size="sm" variant="outline" onClick={saveNow}>
-                Save to this device
-              </Button>
+            <div className="mt-4">
+              <div className="flex flex-wrap gap-2.5">
+                <Button size="sm" href={`https://ezxhibitz.nspired.cc/${auditQuery}`}>
+                  Continue to payment
+                </Button>
+                <Button size="sm" variant="outline" onClick={() => pdfNow()}>
+                  <Download className="w-4 h-4" aria-hidden="true" />
+                  Download PDF
+                </Button>
+                <Button size="sm" variant="ghost" onClick={saveNow}>
+                  Save to this device
+                </Button>
+              </div>
+              <p className="mt-2 t-meta text-muted">
+                Payment, the reviewed packet and the exhibits happen at EZXHIBITZ. The page stays yours to edit here.
+              </p>
             </div>
           )}
         </div>

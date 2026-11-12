@@ -13,16 +13,19 @@ export default function Hero() {
         <div className="lg:grid lg:grid-cols-12 lg:gap-6 lg:min-h-[600px] lg:items-center">
           <div className="lg:col-span-5 pt-10 pb-7 md:pt-14 lg:py-24 relative z-10">
             <h1 className="t-page text-ink text-[clamp(36px,10vw,48px)] md:text-[52px] lg:text-[56px] leading-[1.02] tracking-[-0.035em]">
-              Turn any form into a template
+              Need a form? We got you.
             </h1>
-            <p className="mt-5 text-[19px] leading-7 md:text-[20px] text-muted max-w-[34ch]">{PRIVACY_LINE}</p>
+            <p className="mt-5 text-[19px] leading-7 md:text-[20px] text-ink max-w-[34ch]">
+              Say what you need in one sentence. You get the page, ready to fill and download.
+            </p>
+            <p className="mt-3 text-[16px] leading-6 text-muted max-w-[38ch]">{PRIVACY_LINE}</p>
             <div className="mt-8 grid grid-cols-2 gap-3 max-w-[560px]">
               <button
                 type="button"
                 onClick={() => scrollToSection("recreate")}
                 className={`${btn} bg-primary text-primary-ink border-primary hover:bg-[#0B5540] hover:border-[#0B5540]`}
               >
-                Recreate a form
+                Make my form
               </button>
               <button
                 type="button"

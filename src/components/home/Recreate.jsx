@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Upload, Sparkles, Plus, ListPlus, ShieldCheck, AlertCircle, Check } from "lucide-react";
 import { Reveal, toast, cn } from "@wron/kit";
 import { getCurrentDoc, isEmptyDoc, useDeviceTemplates } from "../templateStore";
@@ -59,6 +59,23 @@ export default function Recreate() {
   const [error, setError] = useState("");
   const [over, setOver] = useState(false);
   const fileRef = useRef(null);
+
+  // A link from a free audit does not drop someone into a gallery to browse:
+  // it opens the generator with the request already written, audit id and all.
+  const auditId = typeof window !== "undefined"
+    ? new URLSearchParams(window.location.search).get("audit") || ""
+    : "";
+  useEffect(() => {
+    if (!auditId) return;
+    setMode("describe");
+    setDesc(
+      "The form I need for the case in this audit: a filing-ready page with the parties, the dates that matter, the amounts, and what I am asking for, laid out so the blanks are easy to fill."
+    );
+    const t = setTimeout(() => {
+      document.getElementById("recreate")?.scrollIntoView({ block: "start", behavior: "smooth" });
+    }, 500);
+    return () => clearTimeout(t);
+  }, [auditId]);
 
   const hasSource = (mode !== "describe" && !!img) || items.length > 0;
   const current = items.length > 0 ? 2 : hasSource ? 1 : 0;
@@ -192,9 +209,9 @@ export default function Recreate() {
   return (
     <section id="recreate" aria-labelledby="recreate-title" className="page-x max-w-[1600px] mx-auto pt-14 md:pt-20 pb-4 scroll-mt-24">
       <Reveal y={12}>
-        <h2 id="recreate-title" className="t-section text-ink">Recreate any form</h2>
+        <h2 id="recreate-title" className="t-section text-ink">Make your form</h2>
         <p className="mt-3 text-[16px] md:text-[18px] text-muted max-w-[52ch]">
-          A court form, a letter, anything. Upload a scan or describe it, plot the points, and get a fill-in template.
+          A court form, a letter, anything. Describe it in a sentence and get the page, ready to fill and download.
         </p>
       </Reveal>
 
@@ -209,6 +226,11 @@ export default function Recreate() {
           {/* 1. Add */}
           <div className="p-5 md:p-8 border-b border-line">
             <h3 className="text-[20px] font-semibold tracking-[-0.02em] text-ink">1. Say what document you need</h3>
+            {auditId && (
+              <p className="mt-2 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-surface px-3 py-1 t-meta text-primary">
+                From your audit {auditId.slice(0, 22)}
+              </p>
+            )}
             <div className="mt-4 flex flex-wrap gap-2.5" role="group" aria-label="How to add the form">
               <button type="button" aria-pressed={mode === "describe"} onClick={() => setMode("describe")} className={seg(mode === "describe")}>
                 Describe it
