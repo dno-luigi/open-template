@@ -1,8 +1,8 @@
 // One place for the site's facts. Read these everywhere; never retype them.
 export const SITE = {
-  name: "Open Template Library",
-  url: "https://templates.nspired.cc",
-  domain: "templates.nspired.cc",
+  name: "Forms",
+  url: "https://forms.nspired.cc",
+  domain: "forms.nspired.cc",
   phone: "8588765295",
   phoneHref: "tel:8588765295",
 };

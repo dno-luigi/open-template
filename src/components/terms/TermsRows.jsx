@@ -2,7 +2,7 @@ import { cn } from "@wron/kit";
 import { LEGAL_NOTE_DEMAND } from "../../data/site";
 
 const ROWS = [
-  { title: "Using the tool", body: "Open Template Library lets people create, save, copy and share document templates." },
+  { title: "Using the tool", body: "Forms lets people create, save, copy and share document templates." },
   { title: "Community sharing", body: "Shared templates are available for others to copy into the editor. Remove personal details before sharing." },
   { title: "Demand letters", body: LEGAL_NOTE_DEMAND, note: true },
   { title: "Reports", body: "Report a community template from its Community list action." },

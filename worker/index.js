@@ -1,4 +1,4 @@
-// Cloudflare backend for Open Template Library.
+// Cloudflare backend for Forms (forms.nspired.cc).
 //
 // The app's bundled client kit (src/wron-kit/cloud.js) was written against a
 // hosted backend at /api/site/<siteId>/<action>. This Worker serves that same

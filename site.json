@@ -1,6 +1,6 @@
 {
-  "name": "Open Template Library",
-  "description": "Upload or describe any form, plot its points and get a fill-in template. Save it, share it, download a PDF. Work stays on your device.",
+  "name": "Forms",
+  "description": "Turn any form into a fill-in template. Upload a scan or describe it, plot its points, save it, share it, download a PDF. Work stays on your device.",
   "lang": "en",
   "favicon": "📄",
   "image": "/paper-poster.webp",
@@ -15,7 +15,10 @@
       "primaryInk": "#FFFFFF",
       "accent": "#FF7A45"
     },
-    "fonts": { "display": "Hanken Grotesk", "body": "Hanken Grotesk" },
+    "fonts": {
+      "display": "Hanken Grotesk",
+      "body": "Hanken Grotesk"
+    },
     "radius": "12px",
     "scheme": "light"
   }

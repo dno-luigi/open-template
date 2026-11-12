@@ -4,7 +4,7 @@ import SectionLink from "../components/SectionLink";
 
 export default function NotFound() {
   return (
-    <Page title="Page not found" description="This page does not exist. Go back to Open Template Library to make, save and share document templates." noindex>
+    <Page title="Page not found" description="This page does not exist. Go back to Forms to make, save and share document templates." noindex>
       <section className="page-x max-w-[1600px] mx-auto py-24 md:py-32">
         <h1 className="t-page text-ink">Page not found</h1>
         <p className="mt-4 text-[17px] text-muted max-w-[40ch]">This page does not exist. Your saved templates are still on this device.</p>
