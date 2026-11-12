@@ -38,6 +38,29 @@ function proxyConfig(env) {
   };
 }
 
+/** The pi harness (op), fetched through its service binding. */
+function opBinding(env) {
+  const binding = env["PI-H"];
+  return binding && typeof binding.fetch === "function" ? binding : null;
+}
+
+/** The saved audit record, read back from the proxy that stores it. */
+async function auditRecord(env, audit) {
+  if (!env.ORPROXY) return "";
+  try {
+    const res = await env.ORPROXY.fetch(
+      new Request(`https://orproxy/v1/audit/${encodeURIComponent(audit)}`, {
+        headers: { accept: "application/json" },
+      }),
+    );
+    if (!res.ok) return "";
+    const data = await res.json().catch(() => ({}));
+    return String(data.rawText || data.lastResponse || "").slice(0, 24_000);
+  } catch {
+    return "";
+  }
+}
+
 /** Which backend a call will use: "proxy-binding" | "proxy" | "workers-ai" | "". */
 function providerName(env) {
   const p = proxyConfig(env);
@@ -99,7 +122,7 @@ async function imageBytes(url) {
 export async function handleAi(request, env, body) {
   if (body.op === "image") return fail(501, "not_supported", "Image generation is not set up on this site.");
 
-  if (!providerName(env)) {
+  if (!providerName(env) && !opBinding(env)) {
     return fail(
       503,
       "ai_not_configured",
@@ -141,11 +164,24 @@ export async function handleAi(request, env, body) {
   try {
     const proxy = proxyConfig(env);
     if (requested) proxy.model = requested;
-    console.log("ai provider:", provider, "model:", requested || proxy.model || "default");
-    text =
-      provider === "workers-ai"
-        ? await askWorkersAi(env, messages, maxTokens)
-        : await askProxy(env, messages, proxy, maxTokens);
+    const audit = typeof body.audit === "string" ? body.audit.trim().slice(0, 120) : "";
+    const op = opBinding(env);
+    console.log("ai provider:", op && audit ? "op" : provider, "audit:", audit || "none");
+    // An arriving audit id means the record already exists: fill the form from
+    // it through op, and keep the model chain as the fallback.
+    if (op && audit) {
+      try {
+        text = await askOp(env, op, messages, audit, maxTokens);
+      } catch (err) {
+        console.error("op fill failed:", (err && err.message) || err);
+      }
+    }
+    if (!text) {
+      text =
+        provider === "workers-ai"
+          ? await askWorkersAi(env, messages, maxTokens)
+          : await askProxy(env, messages, proxy, maxTokens);
+    }
   } catch (err) {
     console.error("ai failed:", err && err.stack ? err.stack : err);
     const detail = String((err && err.message) || "");
@@ -170,6 +206,49 @@ export async function handleAi(request, env, body) {
       .run();
   }
   return json({ text });
+}
+
+/**
+ * Fill a form from a finished Truth Engine audit, through op.
+ *
+ * The record is fetched here rather than assumed: op has no way to look an
+ * audit up by id, so the report travels in the prompt. Anything the record does
+ * not contain is left for the model to leave empty, never invented.
+ */
+async function askOp(env, binding, messages, audit, maxTokens = 6000) {
+  const record = await auditRecord(env, audit);
+  const system = messages.find((m) => m.role === "system");
+  const asked = messages
+    .filter((m) => m.role !== "system")
+    .map((m) => m.text)
+    .filter(Boolean)
+    .join("\n\n");
+  if (!asked) throw new Error("nothing to ask");
+  const prompt = [
+    system && system.text ? `Instructions:\n${system.text.slice(0, 8000)}` : "",
+    `Truth Engine audit ${audit}${record ? `:\n\n${record}` : " (record could not be read)"}`,
+    asked,
+    "Use only the audit above. Reply with the JSON object the instructions ask for and nothing else.",
+  ]
+    .filter(Boolean)
+    .join("\n\n");
+  const res = await binding.fetch(
+    new Request("https://op/api/assistant", {
+      method: "POST",
+      headers: { "content-type": "application/json", accept: "application/json" },
+      body: JSON.stringify({
+        message: prompt.slice(0, 39_000),
+        preset: "truth",
+        session: `template:${audit}`,
+        from: "open-template",
+      }),
+    }),
+  );
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error((data && data.error && data.error.message) || `op answered ${res.status}`);
+  const text = contentText(data && data.text).trim();
+  if (!text) throw new Error("op returned nothing");
+  return text;
 }
 
 /** OpenAI-compatible chat completions, through the URL or through the service binding. */

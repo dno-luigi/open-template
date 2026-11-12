@@ -1,6 +1,6 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "open-template-library",
+  "name": "open-template",
   "main": "worker/index.js",
   "compatibility_date": "2026-10-01",
   "compatibility_flags": ["nodejs_compat"],
@@ -28,7 +28,11 @@
   "unsafe": {
     "bindings": [
       { "name": "AI-PROXY", "type": "service", "service": "ai-proxy", "environment": "production" },
-      { "name": "ORPROXY", "type": "service", "service": "orproxy", "environment": "production" }
+      { "name": "ORPROXY", "type": "service", "service": "orproxy", "environment": "production" },
+      // The agents. No "entrypoint": an entrypointed binding to PiAgent/QCLogger
+      // cannot be fetched or called over RPC, and every request 500s.
+      { "name": "PI-H", "type": "service", "service": "pi-harness-example", "environment": "production" },
+      { "name": "TRUTH", "type": "service", "service": "truth", "environment": "production" }
     ]
   },
   "browser": {

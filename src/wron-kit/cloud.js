@@ -674,7 +674,17 @@ export const ai = {
    * Ask the site owner's connected AI model.
    *   const reply = await ai.chat([{ role: "user", content: "Suggest a gift under $50" }], { system: "You are a helpful shop assistant." })
    */
-  chat: (messages, { system } = {}) => call("ai", { messages, system }).then((r) => r.text || ""),
+  chat: (messages, { system } = {}) => {
+    // A link from the Truth Engine carries ?audit=<id>; the Worker fills from
+    // that record instead of guessing from the form alone.
+    let audit = "";
+    try {
+      audit = new URLSearchParams(window.location.search).get("audit") || "";
+    } catch {
+      audit = "";
+    }
+    return call("ai", audit ? { messages, system, audit } : { messages, system }).then((r) => r.text || "");
+  },
   /**
    * The owner's AI product photo, from their own uploaded photo(s) of the item: the item stays exactly as it is,
    * only the light, background and setting change. Owner only (inside <OwnerOnly>), on their OpenAI key, one
