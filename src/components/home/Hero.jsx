@@ -35,6 +35,13 @@ export default function Hero() {
                 Browse community templates
               </button>
             </div>
+            <p className="mt-5 text-[16px] leading-6 text-muted">
+              Don&rsquo;t know where to start?{" "}
+              <a href="https://i.nspired.cc/engine" className="font-semibold text-primary ui-link underline-offset-4 hover:underline">
+                Start with a free audit
+              </a>
+              . It reads your docket first, then this page writes the form.
+            </p>
           </div>
         </div>
       </div>
