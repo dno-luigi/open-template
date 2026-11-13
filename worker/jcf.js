@@ -77,6 +77,28 @@ function parsePlan(text) {
   return { form, values, reason: String(data.reason || "").slice(0, 300) };
 }
 
+/** The form prints its own text around 8pt; a value has to match it and stay inside its box. */
+function fitToField(field, text) {
+  const size = 8;
+  let width = 200;
+  let height = 12;
+  try {
+    const rect = field.acroField.getWidgets()[0].getRectangle();
+    width = rect.width;
+    height = rect.height;
+  } catch {
+    /* keep the conservative defaults */
+  }
+  const perLine = Math.max(16, Math.floor((width - 6) / (size * 0.52)));
+  const maxLines = Math.max(1, Math.floor((height - 6) / (size * 1.25)));
+  const cap = perLine * maxLines;
+  if (text.length <= cap) return text;
+  const cut = text.slice(0, cap);
+  const stop = Math.max(cut.lastIndexOf(". "), cut.lastIndexOf("; "));
+  const clipped = stop > cap * 0.6 ? cut.slice(0, stop + 1) : `${cut.slice(0, Math.max(1, cap - 1)).trimEnd()}\u2026`;
+  return clipped.trim() || text.slice(0, 200);
+}
+
 /** Fill one form and return its bytes. Unknown keys and empty values are skipped. */
 async function fillForm(env, origin, formId, values) {
   const spec = FORMS[formId];
@@ -109,8 +131,18 @@ async function fillForm(env, origin, formId, values) {
           filled[key] = true;
         }
       } else {
-        const text = String(value).slice(0, 600);
-        formDoc.getTextField(target.field).setText(text);
+        const field = formDoc.getTextField(target.field);
+        const text = fitToField(field, String(value).slice(0, 600));
+        // These forms inherit a default appearance with no Tf operator, which makes
+        // pdf-lib's setFontSize throw and leaves the value printing at the auto size
+        // (14pt, spilling over the form's own rules). Repair the appearance, then set
+        // the text: the value prints at the 8pt the rest of the form uses.
+        try {
+          field.acroField.setDefaultAppearance("/Helv 8 Tf 0 g");
+        } catch {
+          /* the auto size is still readable, just larger */
+        }
+        field.setText(text);
         filled[key] = text;
       }
     } catch (err) {
