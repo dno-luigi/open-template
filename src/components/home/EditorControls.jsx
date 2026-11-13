@@ -14,9 +14,10 @@ import MoneyPath from "./MoneyPath";
 
 const OTHER = "__other";
 
+// Pills, not slabs: four quiet actions on one line rather than four grey blocks.
 const addBtn =
-  "w-full h-16 md:h-11 flex items-center gap-4 md:gap-3.5 px-5 md:px-4 rounded-[6px] border border-line bg-surface text-[18px] md:text-[15px] font-medium text-ink " +
-  "hover:border-primary/40 transition-colors duration-150 active:translate-y-px";
+  "w-full h-12 md:h-10 flex items-center justify-center gap-2 px-4 rounded-full border border-line bg-transparent text-[15px] md:text-[14px] font-medium text-ink " +
+  "hover:bg-surface hover:border-primary/50 transition-colors duration-150 active:translate-y-px";
 
 export default function EditorControls() {
   const { doc, setDoc, update, updateBlock, addBlock, removeBlock, moveBlock } = useCurrentDoc();
@@ -105,9 +106,9 @@ export default function EditorControls() {
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <h2 id="editor-title" className="text-[30px] md:text-[26px] font-semibold tracking-[-0.02em] leading-tight text-ink">
-            Editor
+            Details
           </h2>
-          <p className="mt-1 text-[18px] md:text-[15px] text-muted truncate">{doc.title?.trim() || "Untitled template"}</p>
+          <p className="mt-1 text-[18px] md:text-[15px] text-muted">Name, category and page setup</p>
           {doc.source && <p className="t-meta text-muted mt-1">Copied from the community</p>}
           {!isEmptyDoc(doc) && (
             <div className="mt-4">
@@ -228,7 +229,7 @@ export default function EditorControls() {
 
       <hr className="my-5 border-line" />
 
-      <div className="space-y-3">
+      <div className="grid grid-cols-2 gap-2.5">
         <button type="button" className={addBtn} onClick={() => add(textBlock(""))}>
           <Type className="w-[18px] h-[18px] text-primary" aria-hidden="true" />
           Add text

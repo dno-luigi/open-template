@@ -64,3 +64,26 @@
 .sl-blank { height: 1.3em; }
 .sl-rule { border: 0; border-top: 1px solid #111; margin: 0.4em 0 0.5em; height: 0; }
 .sl-hint { color: #5E6660; text-align: center; padding: 18% 8%; font-family: "Hanken Grotesk", system-ui, sans-serif; }
+
+/* The editor shell: a dark room with the page on the desk. Everything inside
+   reads the same colour tokens, so the shared components theme themselves. */
+.editor-shell {
+  --c-bg: 13 15 14;
+  --c-surface: 22 25 23;
+  --c-ink: 244 246 242;
+  --c-muted: 150 158 151;
+  --c-line: 45 50 46;
+  --c-primary: 40 199 136;
+  --c-primary-ink: 8 12 10;
+  background: rgb(var(--c-bg));
+  color: rgb(var(--c-ink));
+  color-scheme: dark;
+}
+.editor-shell .sheet {
+  border-color: #2b2f2c;
+  box-shadow: 0 34px 70px -28px rgba(0, 0, 0, 0.9), 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+/* On a phone the page was printing at 11px: fine print, not a document. */
+@media (max-width: 767px) {
+  .editor-shell .sheet-wrap:not(.is-thumb) .sheet { font-size: 4.1cqw; }
+}

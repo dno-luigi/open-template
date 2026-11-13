@@ -45,7 +45,7 @@ export default function Editor() {
   return (
     <section id="editor" aria-labelledby="editor-title" className="page-x max-w-[1600px] mx-auto pt-4 lg:pt-10 scroll-mt-20">
       <div>
-        <div className="rounded-theme border border-line bg-bg">
+        <div className="editor-shell rounded-theme border border-line bg-bg overflow-hidden">
           <div className="grid lg:grid-cols-12">
             {/* On a phone the page comes first: the workspace is the document, the
                 block list is the workshop behind it. */}
@@ -68,7 +68,7 @@ export default function Editor() {
                 <div className="mt-4 flex flex-wrap items-center gap-3">
                   <Button
                     size="sm"
-                    className="!bg-accent !text-ink !border-accent hover:!bg-[#D9A600] hover:!border-[#D9A600]"
+                    className="!bg-accent !text-[#14160F] !border-accent hover:!bg-[#F0C22B] hover:!border-[#F0C22B]"
                     onClick={() => pdfNow()}
                   >
                     <Printer className="w-4 h-4" aria-hidden="true" />
@@ -76,7 +76,7 @@ export default function Editor() {
                   </Button>
                 </div>
               </div>
-              <div className="px-7 pb-8 pt-6 md:p-10 overflow-hidden">
+              <div className="px-3 sm:px-7 pb-8 pt-6 md:p-10 overflow-hidden">
               <div
                 aria-hidden="true"
                 className={cn(
@@ -85,7 +85,7 @@ export default function Editor() {
                 )}
               />
               <motion.div
-                className="lg:sticky lg:top-24 w-[calc(100%-1rem)] md:w-[calc(100%-2rem)] lg:w-[calc(100%-3rem)] max-w-[600px] mx-auto"
+                className="lg:sticky lg:top-24 w-full md:w-[calc(100%-2rem)] lg:w-[calc(100%-3rem)] max-w-[600px] mx-auto"
                 animate={{ x: crossed ? 32 : 0 }}
                 transition={reduce ? { duration: 0 } : { duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
               >
