@@ -36,7 +36,7 @@ export function newDoc(partial = {}) {
   // printTitle: older drafts have no value and print the title, as before.
   return { id: uid(), title: "", category: "", blocks: [], source: null, updatedAt: null, font: "serif", margin: "1", printTitle: true, ...partial };
 }
-export const VARIANTS = ["body", "bold", "heading", "name"];
+export const VARIANTS = ["body", "bold", "heading", "name", "label"];
 export const ALIGNS = ["left", "center", "right"];
 const pickVariant = (v) => (VARIANTS.includes(v) ? v : "body");
 const pickAlign = (a) => (ALIGNS.includes(a) ? a : "left");
