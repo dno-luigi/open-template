@@ -115,7 +115,7 @@ export default function EditorControls() {
                   Official court form
                 </Button>
                 <Button size="sm" href={`https://ezxhibitz.nspired.cc/${auditQuery}`}>
-                  Continue to payment
+                  Build the packet · $39
                 </Button>
                 <Button size="sm" variant="outline" onClick={() => pdfNow()}>
                   <Download className="w-4 h-4" aria-hidden="true" />
@@ -126,7 +126,7 @@ export default function EditorControls() {
                 </Button>
               </div>
               <p className="mt-2 t-meta text-muted">
-                Payment, the reviewed packet and the exhibits happen at EZXHIBITZ. The page stays yours to edit here.
+                This form is free. The packet — exhibits, tabs and service proof — is $39 at EZXHIBITZ, and the first three are free.
               </p>
             </div>
           )}

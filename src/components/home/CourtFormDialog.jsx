@@ -173,7 +173,7 @@ export default function CourtFormDialog({ open, onClose, audit = "", description
           </div>
           {saved && (
             <p className="text-[14px] text-muted">
-              Saved as {saved.filename}. Open it, check every line, then sign and file it. EZXHIBITZ takes the exhibits from here.
+              Saved as {saved.filename}. The form is free: open it, check every line, then sign and file it. The packet — exhibits, tabs and service proof — is $39 at EZXHIBITZ.
             </p>
           )}
         </div>
