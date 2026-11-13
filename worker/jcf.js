@@ -20,6 +20,10 @@ const FORMS = {
   "FL-320": { file: "fl320.pdf", map: "fl320.json" },
 };
 
+// Some values belong on a printed rule, not centred in a box: the signature name and
+// the signing date. Positive is up; these sit the text down onto the line.
+const NUDGE = { printName: -2.5, signDate: -1 };
+
 const KEY_HELP = {
   "UD-105": {
     county: "county name only, e.g. LOS ANGELES",
@@ -143,6 +147,15 @@ async function fillForm(env, origin, formId, values) {
           /* the auto size is still readable, just larger */
         }
         field.setText(text);
+        if (NUDGE[key]) {
+          try {
+            const widget = field.acroField.getWidgets()[0];
+            const rect = widget.getRectangle();
+            widget.setRectangle({ x: rect.x, y: rect.y + NUDGE[key], width: rect.width, height: rect.height });
+          } catch {
+            /* the value still prints, just centred in the box */
+          }
+        }
         filled[key] = text;
       }
     } catch (err) {
