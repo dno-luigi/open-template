@@ -99,11 +99,15 @@ export function docLines(doc) {
       lines.push({ kind: "rule", text: "", filled: true });
     } else if (b.type === "field") {
       const filled = !!(b.value && b.value.trim());
-      lines.push({ kind: "field", text: filled ? b.value : `[ ${b.label || "Field"} ]`, filled, label: b.label, variant, align });
+      lines.push({ kind: "field", text: filled ? b.value : "", filled, label: b.label, blockId: b.id, variant, align });
     } else {
       const parts = String(b.text || "").split("\n");
-      parts.forEach((p) =>
-        lines.push(p.trim() ? { kind: "text", text: p, filled: true, variant, align } : { kind: "blank", text: "", filled: false })
+      parts.forEach((p, part) =>
+        lines.push(
+          p.trim()
+            ? { kind: "text", text: p, filled: true, part, blockId: b.id, variant, align }
+            : { kind: "blank", text: "", filled: false }
+        )
       );
     }
   }

@@ -32,7 +32,7 @@ function Status({ mode, pulse }) {
 }
 
 export default function Editor() {
-  const { doc } = useCurrentDoc();
+  const { doc, update, updateBlock } = useCurrentDoc();
   const ps = usePaperState();
   const reduce = useReducedMotion();
   const { saveNow, pdfNow, startShare } = useDocActions();
@@ -44,7 +44,7 @@ export default function Editor() {
 
   return (
     <section id="editor" aria-labelledby="editor-title" className="page-x max-w-[1600px] mx-auto pt-4 lg:pt-10 scroll-mt-20">
-      <div>
+      <div className="ws-backdrop rounded-theme">
         <div className="editor-shell rounded-theme border border-line bg-bg overflow-hidden">
           <div className="grid lg:grid-cols-12">
             {/* On a phone the page comes first: the workspace is the document, the
@@ -55,28 +55,19 @@ export default function Editor() {
             <div className="lg:col-span-8 relative bg-surface border-b lg:border-b-0 lg:border-l border-line overflow-hidden order-1 lg:order-2">
               {/* The page presented as a workspace: what it is, what it is called,
                   one action, then the sheet itself. */}
-              <div className="px-7 pt-7 md:px-10 md:pt-9">
-                <p className="text-[11px] md:text-[12px] font-semibold tracking-[0.22em] text-primary">
-                  DOCUMENT WORKSPACE
+              <div className="ws-head px-6 pt-6 md:px-8 md:pt-7">
+                <p className="ws-label">DOCUMENT WORKSPACE</p>
+                <p className="ws-sub mt-2">
+                  {doc.title?.trim() || "Untitled page"} — editable template. Changes stay in this browser until
+                  printed or saved as PDF.
                 </p>
-                <h3 className="mt-2 font-serif text-[25px] md:text-[30px] leading-[1.15] text-ink break-words">
-                  {doc.title?.trim() || "Untitled page"}
-                </h3>
-                <p className="mt-1.5 text-[14px] md:text-[15px] text-muted">
-                  Editable — changes stay in this browser until you print or save it.
-                </p>
-                <div className="mt-4 flex flex-wrap items-center gap-3">
-                  <Button
-                    size="sm"
-                    className="!bg-accent !text-[#14160F] !border-accent hover:!bg-[#F0C22B] hover:!border-[#F0C22B]"
-                    onClick={() => pdfNow()}
-                  >
-                    <Printer className="w-4 h-4" aria-hidden="true" />
-                    Print / Save as PDF
-                  </Button>
-                </div>
+                <button type="button" className="ws-print" onClick={() => pdfNow()}>
+                  <Printer className="w-[18px] h-[18px]" aria-hidden="true" />
+                  Print Document / Save as PDF
+                </button>
               </div>
-              <div className="px-3 sm:px-7 pb-8 pt-6 md:p-10 overflow-hidden">
+              <div className="ws-divider" />
+              <div className="ws-deck px-3 sm:px-6 pb-8 pt-6 md:p-8 overflow-hidden">
               <div
                 aria-hidden="true"
                 className={cn(
@@ -89,7 +80,7 @@ export default function Editor() {
                 animate={{ x: crossed ? 32 : 0 }}
                 transition={reduce ? { duration: 0 } : { duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
               >
-                <DocPreview doc={doc} />
+                <DocPreview doc={doc} onEdit={updateBlock} onTitle={(title) => update({ title })} />
                 {doc.category === "Demand letters" && (
                   <p className="mt-3 t-meta text-muted">{LEGAL_NOTE_DEMAND}</p>
                 )}

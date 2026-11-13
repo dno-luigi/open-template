@@ -271,20 +271,29 @@ export default function EditorControls() {
       <p className="mt-2 t-meta text-muted">Markdown and text files. Headings, lines, lists and [[Field]] lines map onto the page.</p>
 
       {doc.blocks.length > 0 && (
-        <ol className="mt-6 space-y-3" aria-label="Document parts">
-          {doc.blocks.map((b, i) => (
-            <BlockEditor
-              key={b.id}
-              block={b}
-              index={i}
-              count={doc.blocks.length}
-              focusId={focusId}
-              onMove={(dir) => moveBlock(b.id, dir)}
-              onRemove={() => removeBlock(b.id)}
-              onChange={(patch) => updateBlock(b.id, patch)}
-            />
-          ))}
-        </ol>
+        <details className="mt-6 group">
+          <summary className="flex items-center justify-between gap-3 cursor-pointer list-none min-h-11 px-4 rounded-full border border-line text-[15px] font-medium text-ink hover:border-primary/50 transition-colors">
+            <span>Layout &amp; fields</span>
+            <span aria-hidden="true" className="text-muted transition-transform duration-200 group-open:rotate-180">▾</span>
+          </summary>
+          <p className="mt-2 px-1 t-meta text-muted">
+            You type straight on the page. This list is here for reordering parts, deleting them and renaming a blank.
+          </p>
+          <ol className="mt-3 space-y-3" aria-label="Document parts">
+            {doc.blocks.map((b, i) => (
+              <BlockEditor
+                key={b.id}
+                block={b}
+                index={i}
+                count={doc.blocks.length}
+                focusId={focusId}
+                onMove={(dir) => moveBlock(b.id, dir)}
+                onRemove={() => removeBlock(b.id)}
+                onChange={(patch) => updateBlock(b.id, patch)}
+              />
+            ))}
+          </ol>
+        </details>
       )}
 
       <MoneyPath

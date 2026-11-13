@@ -65,25 +65,95 @@
 .sl-rule { border: 0; border-top: 1px solid #111; margin: 0.4em 0 0.5em; height: 0; }
 .sl-hint { color: #5E6660; text-align: center; padding: 18% 8%; font-family: "Hanken Grotesk", system-ui, sans-serif; }
 
-/* The editor shell: a dark room with the page on the desk. Everything inside
-   reads the same colour tokens, so the shared components theme themselves. */
+/* The editor is the card from ai-NCards, colour for colour: #1e1e1e backdrop,
+   #343941 card, #2d323a deck, khaki #d8cfae label, olive-gold #9c7d33 button. */
+.ws-backdrop { background: #1e1e1e; padding: 10px; }
 .editor-shell {
-  --c-bg: 13 15 14;
-  --c-surface: 22 25 23;
-  --c-ink: 244 246 242;
-  --c-muted: 150 158 151;
-  --c-line: 45 50 46;
-  --c-primary: 40 199 136;
-  --c-primary-ink: 8 12 10;
-  background: rgb(var(--c-bg));
-  color: rgb(var(--c-ink));
+  --c-bg: 52 57 65;
+  --c-surface: 45 50 58;
+  --c-ink: 231 230 225;
+  --c-muted: 200 205 212;
+  --c-line: 65 71 81;
+  --c-primary: 216 207 174;
+  --c-primary-ink: 30 30 30;
+  --c-accent: 156 125 51;
+  background: #343941;
+  color: #e7e6e1;
   color-scheme: dark;
+  font-family: Georgia, "Iowan Old Style", "Times New Roman", serif;
 }
+.ws-head { background: #343941; }
+.ws-label {
+  font-family: Georgia, "Iowan Old Style", "Times New Roman", serif;
+  font-size: 13px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: #d8cfae;
+}
+.ws-sub {
+  font-family: Georgia, "Iowan Old Style", "Times New Roman", serif;
+  font-size: 15px;
+  line-height: 1.45;
+  color: #c8cdd4;
+  max-width: 34em;
+}
+.ws-print {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 16px;
+  min-height: 46px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 4px;
+  background: #9c7d33;
+  color: #fff;
+  font-family: Georgia, "Iowan Old Style", "Times New Roman", serif;
+  font-size: 14px;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+.ws-print:hover { background: #ad8c3c; }
+.ws-print:active { transform: translateY(1px); }
+.ws-divider { height: 1px; background: #414751; }
+.ws-deck { background: #2d323a; }
 .editor-shell .sheet {
-  border-color: #2b2f2c;
-  box-shadow: 0 34px 70px -28px rgba(0, 0, 0, 0.9), 0 1px 0 rgba(255, 255, 255, 0.04);
+  border: 0;
+  box-shadow: 0 18px 40px -18px rgba(0, 0, 0, 0.75);
 }
 /* On a phone the page was printing at 11px: fine print, not a document. */
 @media (max-width: 767px) {
   .editor-shell .sheet-wrap:not(.is-thumb) .sheet { font-size: 4.1cqw; }
+}
+
+/* A blank on the page: a small label above a rule. Type on the rule; once it has
+   content the label steps aside and the line reads as ordinary document text. */
+.sl-field { margin: 0 0 0.6em; }
+.sl-field-label {
+  display: none;
+  font-family: "Hanken Grotesk", system-ui, sans-serif;
+  font-size: 0.5em;
+  line-height: 1.5;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #7A827B;
+}
+.sl-field-value {
+  display: block;
+  min-height: 1.4em;
+  border-bottom: 1px solid #D6DAD5;
+  padding-bottom: 0.05em;
+}
+.sl-field-value.is-empty { border-bottom-color: #6E736D; }
+/* The blank says what it wants, in the document's own serif, until you type over it. */
+.sl-field-value.is-empty::before { content: attr(data-ph); color: #8A8F89; }
+/* What you can type into */
+.sheet.is-live .sl-edit { border-radius: 2px; cursor: text; transition: background-color 0.12s ease; }
+.sheet.is-live .sl-edit:hover { background: rgba(40, 199, 136, 0.07); }
+.sheet.is-live .sl-edit:focus {
+  outline: none;
+  background: rgba(40, 199, 136, 0.14);
+  box-shadow: 0 0 0 1px rgba(40, 199, 136, 0.55);
 }
