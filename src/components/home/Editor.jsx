@@ -1,6 +1,6 @@
 import { lazy, Suspense, useEffect, useState } from "react";
 import { motion, useReducedMotion } from "motion/react";
-import { Laptop, Users, AlertCircle } from "lucide-react";
+import { Laptop, Users, AlertCircle, Printer } from "lucide-react";
 import { cn } from "@wron/kit";
 import { useCurrentDoc } from "../templateStore";
 import Button from "../Button";
@@ -47,10 +47,36 @@ export default function Editor() {
       <div>
         <div className="rounded-theme border border-line bg-bg">
           <div className="grid lg:grid-cols-12">
-            <div className="lg:col-span-4 min-w-0">
+            {/* On a phone the page comes first: the workspace is the document, the
+                block list is the workshop behind it. */}
+            <div className="lg:col-span-4 min-w-0 order-2 lg:order-1">
               <EditorControls />
             </div>
-            <div className="lg:col-span-8 relative bg-surface border-t lg:border-t-0 lg:border-l border-line px-7 py-8 md:p-10 overflow-hidden">
+            <div className="lg:col-span-8 relative bg-surface border-b lg:border-b-0 lg:border-l border-line overflow-hidden order-1 lg:order-2">
+              {/* The page presented as a workspace: what it is, what it is called,
+                  one action, then the sheet itself. */}
+              <div className="px-7 pt-7 md:px-10 md:pt-9">
+                <p className="text-[11px] md:text-[12px] font-semibold tracking-[0.22em] text-primary">
+                  DOCUMENT WORKSPACE
+                </p>
+                <h3 className="mt-2 font-serif text-[25px] md:text-[30px] leading-[1.15] text-ink break-words">
+                  {doc.title?.trim() || "Untitled page"}
+                </h3>
+                <p className="mt-1.5 text-[14px] md:text-[15px] text-muted">
+                  Editable — changes stay in this browser until you print or save it.
+                </p>
+                <div className="mt-4 flex flex-wrap items-center gap-3">
+                  <Button
+                    size="sm"
+                    className="!bg-accent !text-ink !border-accent hover:!bg-[#D9A600] hover:!border-[#D9A600]"
+                    onClick={() => pdfNow()}
+                  >
+                    <Printer className="w-4 h-4" aria-hidden="true" />
+                    Print / Save as PDF
+                  </Button>
+                </div>
+              </div>
+              <div className="px-7 pb-8 pt-6 md:p-10 overflow-hidden">
               <div
                 aria-hidden="true"
                 className={cn(
@@ -68,6 +94,7 @@ export default function Editor() {
                   <p className="mt-3 t-meta text-muted">{LEGAL_NOTE_DEMAND}</p>
                 )}
               </motion.div>
+              </div>
             </div>
           </div>
 
