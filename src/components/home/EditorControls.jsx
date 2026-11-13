@@ -10,6 +10,7 @@ import BlockEditor from "./BlockEditor";
 import { CATEGORIES, LEGAL_NOTE_DEMAND } from "../../data/site";
 import { useDocActions } from "./actions";
 import CourtFormDialog from "./CourtFormDialog";
+import MoneyPath from "./MoneyPath";
 
 const OTHER = "__other";
 
@@ -28,6 +29,7 @@ export default function EditorControls() {
   })();
   const [focusId, setFocusId] = useState(null);
   const [formOpen, setFormOpen] = useState(false);
+  const [moneyOpen, setMoneyOpen] = useState(false);
   const [other, setOther] = useState(false);
   const [confirmNew, setConfirmNew] = useState(false);
 
@@ -128,6 +130,13 @@ export default function EditorControls() {
               <p className="mt-2 t-meta text-muted">
                 This form is free. The packet — exhibits, tabs and service proof — is $39 at EZXHIBITZ, and the first three are free.
               </p>
+              <button
+                type="button"
+                onClick={() => setMoneyOpen(true)}
+                className="mt-1.5 text-[14px] font-semibold text-primary underline underline-offset-2 hover:text-ink"
+              >
+                Money is tight? There is a cheaper path
+              </button>
             </div>
           )}
         </div>
@@ -276,6 +285,16 @@ export default function EditorControls() {
           ))}
         </ol>
       )}
+
+      <MoneyPath
+        open={moneyOpen}
+        onClose={() => setMoneyOpen(false)}
+        auditQuery={auditQuery}
+        onGetForm={() => {
+          setMoneyOpen(false);
+          setFormOpen(true);
+        }}
+      />
 
       <CourtFormDialog
         open={formOpen}
