@@ -53,8 +53,10 @@
 }
 .sheet-serif { font-family: "Times New Roman", Times, "Liberation Serif", serif; }
 .sheet-sans { font-family: Helvetica, Arial, "Liberation Sans", sans-serif; }
+/* Never rescale the type: 11pt on the sheet is 11pt, so the preview holds the
+   proportions of the printed page. Narrow screens scroll, they do not inflate. */
 @container (max-width: 520px) {
-  .sheet-wrap:not(.is-thumb) .sheet { font-size: 2.6cqw; }
+  .sheet-wrap:not(.is-thumb) .sheet { font-size: 1.797cqw; }
 }
 .sl { white-space: pre-wrap; margin: 0; }
 .sl-bold { font-weight: 700; }
@@ -123,11 +125,6 @@
   border: 0;
   box-shadow: 0 18px 40px -18px rgba(0, 0, 0, 0.75);
 }
-/* On a phone the page was printing at 11px: fine print, not a document. */
-@media (max-width: 767px) {
-  .editor-shell .sheet-wrap:not(.is-thumb) .sheet { font-size: 4.1cqw; }
-}
-
 /* A blank on the page: a small label above a rule. Type on the rule; once it has
    content the label steps aside and the line reads as ordinary document text. */
 .sl-field { margin: 0 0 0.6em; }
