@@ -80,7 +80,7 @@ export default function Editor() {
               <div className="grid grid-cols-1 sm:grid-cols-3 md:flex md:flex-wrap items-center gap-3 px-7 py-6 md:p-0">
                 <Button variant="outline" size="sm" className="md:h-10 px-4" onClick={saveNow}>Save to this device</Button>
                 <Button size="sm" className="md:h-10 px-4" onClick={startShare}>Share with community</Button>
-                <Button variant="outline" size="sm" className="md:h-10 px-4" onClick={() => pdfNow()}>Download PDF</Button>
+                <Button variant="outline" size="sm" className="md:h-10 px-4" onClick={() => pdfNow()}>Download the page</Button>
               </div>
             </div>
             {ps.pdfError && (

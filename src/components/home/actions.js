@@ -37,6 +37,22 @@ export function useDocActions() {
       toast.error("Add a title or some text first.");
       return;
     }
+    // A page of empty default points ("Field 1", "Field 2" ...) prints as
+    // "[ Field 1 ] [ Field 2 ]" and nothing else. That is not a document, so it
+    // is not offered as one.
+    const blocks = doc.blocks || [];
+    const placeholderOnly =
+      blocks.length > 0 &&
+      blocks.every(
+        (b) =>
+          (b.type === "field" && !String(b.value || "").trim() && /^Field \d+$/.test(String(b.label || ""))) ||
+          (b.type === "rule") ||
+          (b.type === "text" && !String(b.text || "").trim())
+      );
+    if (placeholderOnly) {
+      toast.error("There is nothing to print yet. Write something, or use the court form.");
+      return;
+    }
     try {
       const { downloadPdf } = await import("./pdf");
       downloadPdf(doc);

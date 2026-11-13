@@ -117,7 +117,9 @@ export function buildDoc(items, { title = "", category = "" } = {}) {
     if (it.kind === "rule") return ruleBlock();
     if (it.kind === "heading") return textBlock(it.label, { variant: "heading" });
     if (it.kind === "text") return textBlock(it.label);
-    return fieldBlock(it.label || "Field", "");
+    // A point with no name is not a field anyone can fill: drop it instead of
+    // shipping "Field 3" onto the page.
+    return it.label && String(it.label).trim() ? fieldBlock(it.label, "") : null;
   });
-  return newDoc({ title: title.trim() || "Recreated form", category: category.trim(), printTitle: false, font: "sans", margin: "0.75", blocks });
+  return newDoc({ title: title.trim() || "Recreated form", category: category.trim(), printTitle: false, font: "sans", margin: "0.75", blocks: blocks.filter(Boolean) });
 }

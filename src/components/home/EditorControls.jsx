@@ -121,7 +121,7 @@ export default function EditorControls() {
                 </Button>
                 <Button size="sm" variant="outline" onClick={() => pdfNow()}>
                   <Download className="w-4 h-4" aria-hidden="true" />
-                  Download PDF
+                  Download the page
                 </Button>
                 <Button size="sm" variant="ghost" onClick={saveNow}>
                   Save to this device
