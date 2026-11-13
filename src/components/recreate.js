@@ -8,8 +8,7 @@ export const KIND_LABEL = { field: "Field to fill in", text: "Fixed text", headi
 
 const SHAPE =
   'Return JSON only, with no other words, in this shape: {"title": string, "category": string, "items": [{"kind": "heading"|"text"|"field"|"rule", "label": string, "x": number, "y": number}]}. ' +
-  "A field is a blank someone fills in: a name line, a date, a case number, a checkbox row. Text is fixed wording that prints the same every time. " +
-  "Never copy personal details that someone already filled in: make that spot a field with a short label. " +
+  "\"label\" is the exact words that print on the page: full sentences for a text item, the section title for a heading, and the short caption for a field (\"Your name\"). " +
   "Keep items in reading order, top to bottom, left to right. At most 80 items.";
 
 const SCAN_SYSTEM =
@@ -18,7 +17,19 @@ const SCAN_SYSTEM =
   " x and y are the center of each item as a fraction of the picture, from 0 to 1, with 0,0 at the top left.";
 
 const DESCRIBE_SYSTEM =
-  "You plan a fill-in document template from a short description, such as a court form, a letter or a checklist. " +
+  "You draft a partially filled court form from a description and, when one is supplied, from an audit of the case. " +
+  "Write it the way the court prints it, in this order: " +
+  "(1) a caption block: the form number and its official title, the court ('SUPERIOR COURT OF CALIFORNIA, COUNTY OF ...'), " +
+  "the party block with names, addresses and phone where known, the case caption ('PETITIONER' / 'RESPONDENT'), 'CASE NUMBER:' and the hearing date, time and department when known; " +
+  "(2) the numbered sections of the form in order, each a heading with its own number and title, followed by the text this person's situation calls for; " +
+  "(3) the declaration under penalty of perjury, then the date and a signature line. " +
+  "Use kind 'text' for anything that prints the same for everyone, and for facts already stated in the description or the audit: the county, the case number, a posting date, a payment date, an amount demanded, a party name that was given. " +
+  "Use kind 'field' only where the person must supply something the record does not answer: their own name, address, phone, email, signature, and any blank the facts do not fill. " +
+  "Write sentences, never bare labels: 'The three-day notice was posted on the door on March 3, and rent was paid on March 5.' " +
+  "Where something must be written in by hand, put a bracketed blank inside the sentence: [ date you paid ]. " +
+  "The caption is filled first: if the description or the audit names the county, the parties, the case number, the hearing date or the department, print those words in the caption and in the body exactly as given. " +
+  "A bracket in the caption is only for something the record truly does not say, never for something it does. " +
+  "Never invent a case number, a date, a name or an amount that was not given. A partially filled form is the goal: the caption and every fact the record supports are already written, and only what the person alone knows is left blank. " +
   SHAPE +
   " Leave out x and y.";
 
@@ -68,9 +79,19 @@ export async function scanWithAi(src) {
   return parseReply(reply);
 }
 
+// The model names the county in the title and still leaves "[ county ]" in the
+// caption. When the title says which county it is, that blank is answered.
+function fillCounty(items, title) {
+  const m = /([A-Z][A-Za-z.'\- ]{2,40}?)\s+County/.exec(String(title || ""));
+  if (!m) return items;
+  const county = m[1].trim().toUpperCase();
+  return items.map((it) => ({ ...it, label: it.label.replace(/\[\s*county\s*\]/gi, county) }));
+}
+
 export async function describeWithAi(description) {
   const reply = await ai.chat([{ role: "user", content: String(description).slice(0, 4000) }], { system: DESCRIBE_SYSTEM });
-  return parseReply(reply);
+  const out = parseReply(reply);
+  return { ...out, items: fillCounty(out.items, out.title) };
 }
 
 // One point per line of a description, no AI needed.

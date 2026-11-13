@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Type, Brackets, ImagePlus, Minus, Scale, FilePlus2, Upload, Download } from "lucide-react";
+import { Type, Brackets, ImagePlus, Minus, Scale, FilePlus2, Upload, Download, FileText } from "lucide-react";
 import { Dialog, toast } from "@wron/kit";
 import { useCurrentDoc, textBlock, fieldBlock, imageBlock, ruleBlock, isEmptyDoc } from "../templateStore";
 import { prepareImage, IMAGE_ACCEPT } from "../imageTools";
@@ -9,6 +9,7 @@ import Button from "../Button";
 import BlockEditor from "./BlockEditor";
 import { CATEGORIES, LEGAL_NOTE_DEMAND } from "../../data/site";
 import { useDocActions } from "./actions";
+import CourtFormDialog from "./CourtFormDialog";
 
 const OTHER = "__other";
 
@@ -26,6 +27,7 @@ export default function EditorControls() {
     return id ? `?audit=${encodeURIComponent(id)}` : "";
   })();
   const [focusId, setFocusId] = useState(null);
+  const [formOpen, setFormOpen] = useState(false);
   const [other, setOther] = useState(false);
   const [confirmNew, setConfirmNew] = useState(false);
 
@@ -80,6 +82,14 @@ export default function EditorControls() {
     }
   };
 
+  // What the audit and this page say, so the form can be planned before it opens.
+  const formDescription = [
+    doc.title || "",
+    ...(doc.blocks || []).filter((b) => b.kind === "text" || b.kind === "heading").map((b) => b.label || ""),
+  ]
+    .join("\n")
+    .slice(0, 3000);
+
   const exportMd = () => {
     if (isEmptyDoc(doc)) {
       toast.error("Add a title or some text first.");
@@ -100,6 +110,10 @@ export default function EditorControls() {
           {!isEmptyDoc(doc) && (
             <div className="mt-4">
               <div className="flex flex-wrap gap-2.5">
+                <Button size="sm" onClick={() => setFormOpen(true)}>
+                  <FileText className="w-4 h-4" aria-hidden="true" />
+                  Official court form
+                </Button>
                 <Button size="sm" href={`https://ezxhibitz.nspired.cc/${auditQuery}`}>
                   Continue to payment
                 </Button>
@@ -262,6 +276,13 @@ export default function EditorControls() {
           ))}
         </ol>
       )}
+
+      <CourtFormDialog
+        open={formOpen}
+        onClose={() => setFormOpen(false)}
+        audit={new URLSearchParams(typeof window === "undefined" ? "" : window.location.search).get("audit") || ""}
+        description={formDescription}
+      />
 
       <Dialog open={confirmNew} onClose={() => setConfirmNew(false)} title="Start a new document?" panelClassName="bg-bg">
         <p className="text-[16px] text-muted">The editor will be cleared. Templates you saved on this device stay saved.</p>

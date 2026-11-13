@@ -66,3 +66,15 @@ redirecting `301` means a plain `curl` needs `-L`. Form index pages live at
 - The forms are public records, but they are copyrighted by the Judicial Council;
   filling them for a filer is the intended use, redistributing a modified blank
   form is not.
+
+## What was built (v1, this repo)
+
+- `public/forms/ud105.pdf` and `fl320.pdf` are the Council's blanks, decrypted once with
+  the blank password, beside a `*.json` map of semantic key -> field name and label.
+- `worker/jcf.js` (`POST /api/site/:siteId/jcf`) plans values from the audit and the
+  description, fills the real fields with pdf-lib, and returns the PDF. `dry: true`
+  returns the same plan plus the list of blanks the record could not answer.
+- `src/components/home/CourtFormDialog.jsx` shows what the audit filled and turns each
+  remaining blank into a question card; the answers go back onto the form.
+- Two forms only, deliberately: UD-105 for an eviction answer, FL-320 for a response to
+  a request for order. The packet and exhibits stay at EZXHIBITZ.

@@ -1,0 +1,72 @@
+{
+ "id": "UD-105",
+ "title": "Answer\u2014Unlawful Detainer",
+ "file": "ud105.pdf",
+ "keys": {
+  "county": {
+   "field": "UD-105[0].Page1[0].P1Caption[0].CourtInfo[0].CrtCounty[0]",
+   "type": "text",
+   "label": "SUPERIOR COURT OF CALIFORNIA, COUNTY OF"
+  },
+  "courtAddress": {
+   "field": "UD-105[0].Page1[0].P1Caption[0].CourtInfo[0].CrtMailingAdd[0]",
+   "type": "text",
+   "label": "MAILING ADDRESS:"
+  },
+  "courtCityZip": {
+   "field": "UD-105[0].Page1[0].P1Caption[0].CourtInfo[0].CrtCityZip[0]",
+   "type": "text",
+   "label": "CITY AND ZIP CODE:"
+  },
+  "courtBranch": {
+   "field": "UD-105[0].Page1[0].P1Caption[0].CourtInfo[0].CrtBranch[0]",
+   "type": "text",
+   "label": "BRANCH NAME:"
+  },
+  "caseNumber": {
+   "field": "UD-105[0].Page1[0].P1Caption[0].CaptionSub[0].CaseNumber[0].CaseNumber[0]",
+   "type": "text",
+   "label": "CASE NUMBER:"
+  },
+  "plaintiff": {
+   "field": "UD-105[0].Page1[0].P1Caption[0].TitlePartyName[0].Party1[0]",
+   "type": "text",
+   "label": "PLAINTIFF:"
+  },
+  "defendant": {
+   "field": "UD-105[0].Page1[0].P1Caption[0].TitlePartyName[0].Party2[0]",
+   "type": "text",
+   "label": "DEFENDANT:"
+  },
+  "defendantList": {
+   "field": "UD-105[0].Page1[0].List1[0].item1[0].FillField1[0]",
+   "type": "text",
+   "label": "Defendant (all defendants for whom this answer is filed must be named and must sign this answer unless their attorney signs):"
+  },
+  "generalDenial": {
+   "field": "UD-105[0].Page1[0].List2[0].Lia[0].Check1[0]",
+   "type": "check",
+   "label": "General Denial (Do not check this box if the complaint demands more than $1,000.) Defendant generally denies each statement of the complaint."
+  },
+  "specificDenials": {
+   "field": "UD-105[0].Page1[0].List2[0].Lib[0].Check1[0]",
+   "type": "check",
+   "label": "Specific Denials (Check this box and complete (1) and (2) below if complaint demands more than $1,000.) Defendant admits that all the statements of the complaint are true EXCEPT:"
+  },
+  "defenseFacts": {
+   "field": "UD-105[0].Page3[0].List3[0].li3t[0].FillField9[0]",
+   "type": "text",
+   "label": "(Provide facts for each item checked above, either below or, if more room needed, on form MC-025):"
+  },
+  "printName": {
+   "field": "UD-105[0].Page4[0].Sign[0].PrintName1[0]",
+   "type": "text",
+   "label": "(TYPE OR PRINT NAME)"
+  },
+  "signDate": {
+   "field": "UD-105[0].Page4[0].Verification[0].Date3[0]",
+   "type": "text",
+   "label": "Date:"
+  }
+ }
+}

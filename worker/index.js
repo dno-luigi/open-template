@@ -14,6 +14,7 @@
 // Anything else falls through to the built single-page app in ./dist.
 import { handleAi } from "./ai.js";
 import { handleDb } from "./db.js";
+import { handleJcf } from "./jcf.js";
 import { handleShot } from "./shot.js";
 import { fail, readBody } from "./util.js";
 
@@ -50,6 +51,8 @@ export default {
           return await handleAi(request, env, body);
         case "shot":
           return await handleShot(request, env, body);
+        case "jcf":
+          return await handleJcf(request, env, body);
         case "hit":
         case "errors":
           // Beacons: accepted so the page never errors, deliberately not stored.

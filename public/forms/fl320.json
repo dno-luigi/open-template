@@ -1,0 +1,77 @@
+{
+ "id": "FL-320",
+ "title": "Responsive Declaration to Request for Order",
+ "file": "fl320.pdf",
+ "keys": {
+  "county": {
+   "field": "FL-320[0].Page1[0].P1Caption_sf[0].CourtInfo[0].CrtCounty_ft[0]",
+   "type": "text",
+   "label": "SUPERIOR COURT OF CALIFORNIA, COUNTY OF"
+  },
+  "courtAddress": {
+   "field": "FL-320[0].Page1[0].P1Caption_sf[0].CourtInfo[0].MailingAdd_ft[0]",
+   "type": "text",
+   "label": "MAILING ADDRESS"
+  },
+  "courtCityZip": {
+   "field": "FL-320[0].Page1[0].P1Caption_sf[0].CourtInfo[0].CityZip_ft[0]",
+   "type": "text",
+   "label": "CITY AND ZIP CODE"
+  },
+  "courtBranch": {
+   "field": "FL-320[0].Page1[0].P1Caption_sf[0].CourtInfo[0].Branch_ft[0]",
+   "type": "text",
+   "label": "BRANCH NAME"
+  },
+  "caseNumber": {
+   "field": "FL-320[0].Page1[0].P1Caption_sf[0].CaptionSub[0].CaseNumber[0].CaseNumber_ft[0]",
+   "type": "text",
+   "label": "CASE NUMBER"
+  },
+  "petitioner": {
+   "field": "FL-320[0].Page1[0].P1Caption_sf[0].TitlePartyName[0].Petitioner_ft[0]",
+   "type": "text",
+   "label": "PETITIONER"
+  },
+  "respondent": {
+   "field": "FL-320[0].Page1[0].P1Caption_sf[0].TitlePartyName[0].Respondent_ft[0]",
+   "type": "text",
+   "label": "RESPONDENT"
+  },
+  "otherParty": {
+   "field": "FL-320[0].Page1[0].P1Caption_sf[0].TitlePartyName[0].OtherParentParty_ft[0]",
+   "type": "text",
+   "label": "OTHER PARENT/PARTY"
+  },
+  "hearingDate": {
+   "field": "FL-320[0].Page1[0].P1Caption_sf[0].FormTitle[0].HearingDate_dt[0]",
+   "type": "text",
+   "label": "HEARING DATE"
+  },
+  "hearingTime": {
+   "field": "FL-320[0].Page1[0].P1Caption_sf[0].FormTitle[0].Time_ft[0]",
+   "type": "text",
+   "label": "TIME"
+  },
+  "department": {
+   "field": "FL-320[0].Page1[0].P1Caption_sf[0].FormTitle[0].DeptRoom_ft[0]",
+   "type": "text",
+   "label": "DEPARTMENT OR ROOM"
+  },
+  "facts": {
+   "field": "FL-320[0].Page2[0].List9[0].Li1[0].List10[0].LI1[0].FactsToSupport_ft[0]",
+   "type": "text",
+   "label": "FACTS TO SUPPORT my responsive declaration are:"
+  },
+  "printName": {
+   "field": "FL-320[0].Page2[0].Sig_Sub[0].YourName_ft[0]",
+   "type": "text",
+   "label": "(TYPE OR PRINT NAME)"
+  },
+  "signDate": {
+   "field": "FL-320[0].Page2[0].Sig_Sub[0].DateTimeField1[0]",
+   "type": "text",
+   "label": "Date"
+  }
+ }
+}

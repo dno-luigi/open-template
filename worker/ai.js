@@ -313,3 +313,26 @@ async function askWorkersAi(env, messages, maxTokens = 6000) {
   if (!text) throw new Error("The model returned nothing.");
   return String(text);
 }
+
+/**
+ * One JSON-shaped question, through the same chain handleAi uses. Kept separate so
+ * the court-form filler can plan values without going through the chat endpoint.
+ */
+export async function askForJson(env, { audit = "", system = "", user = "", maxTokens = 3000 } = {}) {
+  const messages = [
+    ...(system ? [{ role: "system", text: system, images: [] }] : []),
+    { role: "user", text: String(user).slice(0, 40_000), images: [] },
+  ];
+  const op = opBinding(env);
+  if (op && audit) {
+    try {
+      return await askOp(env, op, messages, audit, maxTokens);
+    } catch (err) {
+      console.error("op plan failed:", (err && err.message) || err);
+    }
+  }
+  const provider = providerName(env);
+  if (provider === "workers-ai") return askWorkersAi(env, messages, maxTokens);
+  if (provider) return askProxy(env, messages, proxyConfig(env), maxTokens);
+  throw new Error("AI help is not connected on this site.");
+}
