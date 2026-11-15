@@ -42,7 +42,7 @@ export default function CommunityTable({ rows, state, fresh }) {
     <button
       type="button"
       onClick={() => setReporting(r)}
-      className="inline-flex items-center gap-1.5 min-h-11 md:min-h-9 px-2 rounded-[6px] text-[14px] font-medium text-muted hover:text-ink hover:bg-surface transition-colors duration-150"
+      className="inline-flex items-center gap-1.5 min-h-11 md:min-h-9 px-2 rounded-[10px] text-[14px] font-medium text-muted hover:text-ink hover:bg-surface transition-colors duration-150"
     >
       <Flag className="w-4 h-4" aria-hidden="true" />
       Report
@@ -52,10 +52,10 @@ export default function CommunityTable({ rows, state, fresh }) {
   return (
     <>
       {/* Desktop and tablet: table with a sticky header */}
-      <div className="hidden md:block border border-line bg-bg max-h-[680px] overflow-y-auto">
+      <div className="hidden md:block overflow-hidden rounded-[16px] border border-line bg-bg max-h-[680px] overflow-y-auto">
         <table className="w-full text-left border-collapse">
           <thead className="sticky top-0 z-10 bg-bg">
-            <tr className="shadow-[inset_0_-1px_0_#E6E2F2]">
+            <tr className="shadow-[inset_0_-1px_0_#E2E4DE]">
               {HEADS.map((h) => (
                 <th key={h} scope="col" className={cn("px-5 h-12 t-meta text-muted font-medium", RIGHT.has(h) && "text-right")}>
                   {h}
@@ -95,7 +95,7 @@ export default function CommunityTable({ rows, state, fresh }) {
       </div>
 
       {/* Phones: one card per template */}
-      <div className="md:hidden border border-line bg-bg">
+      <div className="md:hidden overflow-hidden rounded-[16px] border border-line bg-bg">
         {state ? (
           state
         ) : (

@@ -56,7 +56,7 @@ export default function SharePanel() {
             type="button"
             onClick={close}
             aria-label="Close"
-            className="inline-flex items-center justify-center w-11 h-11 -mr-2 rounded-[6px] hover:bg-surface transition-colors duration-150"
+            className="inline-flex items-center justify-center w-11 h-11 -mr-2 rounded-[10px] hover:bg-surface transition-colors duration-150"
           >
             <X className="w-5 h-5" />
           </button>
@@ -72,7 +72,7 @@ export default function SharePanel() {
             </div>
           ) : (
             <form onSubmit={submit} className="space-y-5" noValidate>
-              <div className="rounded-[6px] border border-line bg-surface px-4 py-3">
+              <div className="rounded-[10px] border border-line bg-surface px-4 py-3">
                 <p className="text-[16px] font-semibold text-ink truncate">{doc.title || "Untitled template"}</p>
                 <p className="t-meta text-muted mt-0.5">{doc.category || "No category"}</p>
               </div>
@@ -106,7 +106,7 @@ export default function SharePanel() {
               <Checkbox label="I removed personal details" checked={ok} onChange={(e) => setOk(e.target.checked)} />
 
               {error && (
-                <p role="alert" className="text-[15px] text-[#B42318]">{error}</p>
+                <p role="alert" className="text-[15px] text-[#9B2C1F]">{error}</p>
               )}
 
               <Button type="submit" className="w-full" disabled={sending || !ok}>

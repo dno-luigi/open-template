@@ -11,7 +11,7 @@ function Wordmark({ onClick }) {
       to="/"
       onClick={onClick}
       aria-label={`${SITE.name}, home`}
-      className="font-display text-[clamp(21px,6vw,26px)] md:text-[22px] font-semibold tracking-[-0.02em] text-ink leading-none"
+      className="whitespace-nowrap font-display text-[17px] sm:text-[18px] md:text-[19px] font-medium tracking-[-0.01em] text-ink leading-none"
     >
       {SITE.name}
     </Link>
@@ -22,45 +22,47 @@ function Header() {
   const menu = useDisclosure();
   return (
     <>
-    <header className="sticky top-0 inset-x-0 z-50 flex h-16 md:h-[72px] shrink-0 bg-white border-b border-line">
-      <div className="page-x w-full h-full flex items-center justify-between gap-4 max-w-[1600px] mx-auto">
+    <header className="sticky top-0 inset-x-0 z-50 flex h-16 md:h-[72px] shrink-0 border-b border-line bg-bg/90 backdrop-blur">
+      <div className="page-x w-full h-full flex items-center justify-between gap-4 max-w-[1200px] mx-auto">
         <Wordmark />
-        <nav aria-label="Sections" className="hidden md:flex items-center gap-4 lg:gap-8">
+        <nav aria-label="Sections" className="hidden md:flex items-center gap-1">
           {NAV.map((n) => (
             <SectionLink
               key={n.id}
               id={n.id}
-              className="text-[15px] font-medium text-ink/80 hover:text-primary transition-colors duration-150 ui-link"
+              className="rounded-full px-3 py-2 text-[14px] font-medium text-muted hover:text-ink hover:bg-surface transition-colors duration-150"
             >
               {n.label}
             </SectionLink>
           ))}
         </nav>
-        <Link
-          to="/privacy"
-          className="hidden lg:inline-flex items-center gap-1.5 text-[15px] text-muted hover:text-primary transition-colors duration-150 ui-link"
-        >
-          Privacy first
-        </Link>
-        <button
-          type="button"
-          onClick={menu.onOpen}
-          aria-label="Open menu"
-          className="md:hidden inline-flex items-center justify-center w-11 h-11 -mr-2 rounded-theme text-ink hover:bg-surface active:translate-y-px transition-colors duration-150"
-        >
-          <Menu className="w-5 h-5" />
-        </button>
+        <div className="flex items-center gap-1">
+          <Link
+            to="/privacy"
+            className="hidden lg:inline-flex items-center gap-1.5 rounded-full px-3 py-2 text-[14px] text-muted hover:text-ink hover:bg-surface transition-colors duration-150"
+          >
+            Privacy first
+          </Link>
+          <button
+            type="button"
+            onClick={menu.onOpen}
+            aria-label="Open menu"
+            className="md:hidden inline-flex items-center justify-center w-11 h-11 -mr-2 rounded-full text-ink hover:bg-surface active:translate-y-px transition-colors duration-150"
+          >
+            <Menu className="w-5 h-5" />
+          </button>
+        </div>
       </div>
 
       <Sheet open={menu.open} onClose={menu.onClose} side="right" panelClassName="bg-bg w-[86vw] max-w-sm">
         <div className="flex flex-col h-full p-5">
           <div className="flex items-center justify-between h-[52px]">
-            <span className="font-semibold text-ink">Menu</span>
+            <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-muted">Menu</span>
             <button
               type="button"
               onClick={menu.onClose}
               aria-label="Close menu"
-              className="inline-flex items-center justify-center w-11 h-11 -mr-2 rounded-theme hover:bg-surface"
+              className="inline-flex items-center justify-center w-11 h-11 -mr-2 rounded-full hover:bg-surface"
             >
               <X className="w-5 h-5" />
             </button>
@@ -95,16 +97,16 @@ function Header() {
 }
 
 function Footer() {
-  const link = "text-[15px] text-ink hover:text-primary ui-link inline-flex items-center min-h-[44px] md:min-h-0";
+  const link = "text-[14px] text-ink hover:text-primary ui-link inline-flex items-center min-h-[44px] md:min-h-0";
   return (
     <footer className="border-t border-line bg-bg">
-      <div className="page-x max-w-[1600px] mx-auto py-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 lg:items-start gap-x-10 gap-y-3 lg:gap-y-4">
+      <div className="page-x max-w-[1200px] mx-auto py-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 lg:items-start gap-x-10 gap-y-3 lg:gap-y-4">
         <div>
-          <p className="font-semibold text-[17px] tracking-[-0.01em] text-ink">{SITE.name}</p>
-          <p className="text-[15px] text-muted mt-1 max-w-[34ch]">{PRIVACY_SHORT}</p>
+          <p className="font-display text-[17px] font-medium text-ink">{SITE.name}</p>
+          <p className="text-[15px] text-muted mt-2 max-w-[34ch]">{PRIVACY_SHORT}</p>
         </div>
         <div className="flex flex-col lg:justify-self-center">
-          <a href={SITE.url} className={link}>{SITE.domain}</a>
+          <a href={SITE.url} className={`${link} font-mono text-[12px]`}>{SITE.domain}</a>
           <a href={SITE.phoneHref} className={`${link} tabular-nums`}>{SITE.phone}</a>
         </div>
         <div className="flex flex-wrap gap-x-5 gap-y-1 sm:col-span-2 lg:col-span-1 lg:justify-self-end">
@@ -145,7 +147,7 @@ export default function Layout() {
 
   return (
     <div className="min-h-screen w-full max-w-full overflow-x-clip flex flex-col bg-bg text-ink font-body">
-      <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:bg-primary focus:text-primary-ink focus:px-4 focus:py-2 focus:rounded-theme">
+      <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:bg-primary focus:text-primary-ink focus:px-4 focus:py-2 focus:rounded-full">
         Skip to content
       </a>
       <Header />

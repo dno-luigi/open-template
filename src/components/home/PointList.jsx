@@ -3,7 +3,7 @@ import { cn } from "@wron/kit";
 import { KINDS, KIND_LABEL } from "../recreate";
 
 const control =
-  "h-11 rounded-[6px] border border-line bg-bg px-3 text-[15px] text-ink transition-colors duration-150 " +
+  "h-11 rounded-[10px] border border-line bg-bg px-3 text-[15px] text-ink transition-colors duration-150 " +
   "hover:border-primary/40 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20";
 
 export default function PointList({ items, selected, onSelect, onChange, onRemove }) {
@@ -14,7 +14,7 @@ export default function PointList({ items, selected, onSelect, onChange, onRemov
           key={it.id}
           onFocusCapture={() => onSelect(it.id)}
           className={cn(
-            "grid grid-cols-[28px_minmax(0,1fr)_44px] sm:grid-cols-[28px_minmax(0,1fr)_170px_44px] items-center gap-x-2 gap-y-2 rounded-[6px] border p-2 transition-colors duration-150",
+            "grid grid-cols-[28px_minmax(0,1fr)_44px] sm:grid-cols-[28px_minmax(0,1fr)_170px_44px] items-center gap-x-2 gap-y-2 rounded-[10px] border p-2 transition-colors duration-150",
             it.id === selected ? "border-primary/60 bg-surface" : "border-line bg-bg"
           )}
         >
@@ -51,7 +51,7 @@ export default function PointList({ items, selected, onSelect, onChange, onRemov
             type="button"
             onClick={() => onRemove(it.id)}
             aria-label={`Remove point ${i + 1}`}
-            className="inline-flex items-center justify-center w-11 h-11 rounded-[6px] text-muted hover:text-primary hover:bg-surface transition-colors duration-150 active:translate-y-px"
+            className="inline-flex items-center justify-center w-11 h-11 rounded-[10px] text-muted hover:text-primary hover:bg-surface transition-colors duration-150 active:translate-y-px"
           >
             <Trash2 className="w-4 h-4" />
           </button>

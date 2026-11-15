@@ -1,8 +1,9 @@
-import { lazy, Suspense, useEffect, useState } from "react";
+import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { motion, useReducedMotion } from "motion/react";
 import { Laptop, Users, AlertCircle } from "lucide-react";
 import { Reveal, cn } from "@wron/kit";
 import { useCurrentDoc } from "../templateStore";
+import { addMarkdownFiles } from "../markdownIntake";
 import Button from "../Button";
 import { STATUS, LEGAL_NOTE_DEMAND } from "../../data/site";
 import EditorControls from "./EditorControls";
@@ -21,7 +22,7 @@ function Status({ mode, pulse }) {
       role="status"
       className={cn(
         "inline-flex items-center gap-2.5 rounded-full pr-3 py-1 text-[18px] md:text-[15px]",
-        shared ? "text-[#B4441A]" : "text-muted",
+        shared ? "text-[#9B2C1F]" : "text-muted",
         pulse > 0 && "status-pulse"
       )}
     >
@@ -32,7 +33,7 @@ function Status({ mode, pulse }) {
 }
 
 export default function Editor() {
-  const { doc } = useCurrentDoc();
+  const { doc, setDoc } = useCurrentDoc();
   const ps = usePaperState();
   const reduce = useReducedMotion();
   const { saveNow, pdfNow, startShare } = useDocActions();
@@ -42,10 +43,55 @@ export default function Editor() {
     if (ps.crossing || ps.shareOpen) setShareLoaded(true);
   }, [ps.crossing, ps.shareOpen]);
 
+  // Dropping Markdown anywhere on the editor appends it to the open template.
+  // A counter rather than a flag: dragging over a child fires leave on the parent.
+  const [dragging, setDragging] = useState(false);
+  const dragDepth = useRef(0);
+  const carriesFiles = (e) => Array.from(e.dataTransfer?.types || []).includes("Files");
+  const onDragEnter = (e) => {
+    if (!carriesFiles(e)) return;
+    e.preventDefault();
+    dragDepth.current += 1;
+    setDragging(true);
+  };
+  const onDragOver = (e) => {
+    if (!carriesFiles(e)) return;
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "copy";
+  };
+  const onDragLeave = (e) => {
+    if (!carriesFiles(e)) return;
+    dragDepth.current = Math.max(0, dragDepth.current - 1);
+    if (dragDepth.current === 0) setDragging(false);
+  };
+  const onDrop = (e) => {
+    if (!carriesFiles(e)) return;
+    e.preventDefault();
+    dragDepth.current = 0;
+    setDragging(false);
+    addMarkdownFiles(e.dataTransfer.files, setDoc);
+  };
+
   return (
-    <section id="editor" aria-labelledby="editor-title" className="page-x max-w-[1600px] mx-auto pt-4 lg:pt-10 scroll-mt-20">
+    <section id="editor" aria-labelledby="editor-title" className="page-x max-w-[1200px] mx-auto pt-4 lg:pt-10 scroll-mt-20">
       <Reveal y={12}>
-        <div className="rounded-theme border border-line bg-bg">
+        <div
+          className="relative rounded-[20px] border border-line bg-bg overflow-hidden"
+          onDragEnter={onDragEnter}
+          onDragOver={onDragOver}
+          onDragLeave={onDragLeave}
+          onDrop={onDrop}
+        >
+          {dragging && (
+            <div className="pointer-events-none absolute inset-0 z-20 grid place-items-center bg-bg/85 backdrop-blur-[2px]">
+              <div className="rounded-[18px] border-2 border-dashed border-primary/60 px-8 py-10 text-center">
+                <p className="text-[20px] font-semibold text-ink">Drop Markdown files</p>
+                <p className="t-meta text-muted mt-2">
+                  .md or .txt, up to 500 KB each. Headings, lists and [[Field]] lines map onto the page.
+                </p>
+              </div>
+            </div>
+          )}
           <div className="grid lg:grid-cols-12">
             <div className="lg:col-span-4 min-w-0">
               <EditorControls />
@@ -85,7 +131,7 @@ export default function Editor() {
             </div>
             {ps.pdfError && (
               <div role="alert" className="px-6 pb-6 md:p-0 md:mt-4 flex flex-wrap items-center gap-3 text-[15px] text-ink">
-                <AlertCircle className="w-5 h-5 text-[#B42318]" aria-hidden="true" />
+                <AlertCircle className="w-5 h-5 text-[#9B2C1F]" aria-hidden="true" />
                 <span>{PDF_FAIL}</span>
                 <button type="button" onClick={() => pdfNow()} className="font-semibold text-primary ui-link min-h-11 md:min-h-0">
                   Try again

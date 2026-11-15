@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1536" height="1024" viewBox="0 0 1536 1024" fill="none">
+  <defs>
+    <radialGradient id="bg" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(940 360) rotate(128) scale(720 620)">
+      <stop stop-color="#F4F3EE"/>
+      <stop offset="1" stop-color="#E9E8E1"/>
+    </radialGradient>
+    <linearGradient id="paper" x1="620" y1="120" x2="960" y2="760" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFFFFF"/>
+      <stop offset="1" stop-color="#FBFAF6"/>
+    </linearGradient>
+    <filter id="shadow" x="470" y="40" width="650" height="850" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="28" stdDeviation="24" flood-color="#161615" flood-opacity="0.18"/>
+    </filter>
+    <filter id="soft" x="560" y="100" width="470" height="690" filterUnits="userSpaceOnUse">
+      <feGaussianBlur stdDeviation="0.5"/>
+    </filter>
+  </defs>
+
+  <rect width="1536" height="1024" fill="url(#bg)"/>
+  <ellipse cx="760" cy="820" rx="310" ry="44" fill="#161615" opacity="0.08" filter="url(#soft)"/>
+
+  <g transform="translate(768 512) scale(1.55) translate(-768 -512) rotate(-8 768 512)" filter="url(#shadow)">
+    <rect x="575" y="120" width="410" height="640" rx="10" fill="url(#paper)" stroke="#C5C2B8"/>
+    <path d="M905 120H985L905 200V120Z" fill="#E4E3DA" stroke="#CFCDC3"/>
+    <path d="M905 120V200H985" stroke="#C5C2B8"/>
+
+    <rect x="625" y="232" width="310" height="2" fill="#11335C" opacity="0.85"/>
+    <rect x="678" y="288" width="204" height="2" fill="#7A837C" opacity="0.55"/>
+    <rect x="704" y="312" width="152" height="2" fill="#7A837C" opacity="0.42"/>
+    <rect x="625" y="356" width="310" height="2" fill="#11335C" opacity="0.85"/>
+
+    <g stroke="#11335C" stroke-width="2.5" stroke-linecap="round" opacity="0.9">
+      <path d="M700 402h-14v44h14"/>
+      <path d="M758 402h-14v44h14"/>
+      <path d="M700 488h-14v44h14"/>
+      <path d="M758 488h-14v44h14"/>
+      <path d="M700 574h-14v44h14"/>
+      <path d="M758 574h-14v44h14"/>
+    </g>
+
+    <rect x="625" y="650" width="310" height="2" fill="#11335C" opacity="0.85"/>
+    <rect x="625" y="686" width="238" height="2" fill="#B5B2A7" opacity="0.8"/>
+    <rect x="625" y="710" width="278" height="2" fill="#B5B2A7" opacity="0.65"/>
+    <rect x="625" y="734" width="186" height="2" fill="#B5B2A7" opacity="0.55"/>
+  </g>
+
+  <g opacity="0.55">
+    <rect x="110" y="820" width="54" height="2" fill="#11335C"/>
+    <rect x="110" y="838" width="34" height="2" fill="#7A837C"/>
+    <rect x="1372" y="820" width="54" height="2" fill="#11335C"/>
+    <rect x="1392" y="838" width="34" height="2" fill="#7A837C"/>
+  </g>
+</svg>

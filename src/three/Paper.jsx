@@ -13,7 +13,7 @@ const TW = 768;
 const TH = 1024;
 const C1 = H / 6; // upper crease
 const C2 = -H / 6; // lower crease
-const FONT = '"Hanken Grotesk", system-ui, sans-serif';
+const FONT = '"Instrument Sans", system-ui, sans-serif';
 const FAM = {
   serif: '"Times New Roman", Times, "Liberation Serif", serif',
   sans: 'Helvetica, Arial, "Liberation Sans", sans-serif',
@@ -69,7 +69,7 @@ function drawPaper(ctx, doc, step, mode, onLoad) {
   ctx.save();
   ctx.clip();
   if (mode === "shared") {
-    ctx.fillStyle = "#FF7A45";
+    ctx.fillStyle = "#8C6C14";
     ctx.fillRect(0, 0, 12, TH);
   }
 
@@ -92,7 +92,7 @@ function drawPaper(ctx, doc, step, mode, onLoad) {
     if (l.kind === "blank") { y += 11 * 1.3 * k; continue; }
     if (l.kind === "rule") {
       y += 3 * k;
-      ctx.fillStyle = "#141026";
+      ctx.fillStyle = "#121A14";
       ctx.fillRect(m, y, maxW, hair);
       y += 6 * k;
       continue;
@@ -109,8 +109,7 @@ function drawPaper(ctx, doc, step, mode, onLoad) {
     }
     const v = SPEC[l.variant] || SPEC.body;
     const size = v.s * k;
-    ctx.font = `${v.b ? 700 : 400} ${size}px ${fam}`;
-    ctx.fillStyle = l.kind === "field" && !l.filled ? "#5B3DF5" : "#141026";
+          ctx.font = `${v.b ? 700 : 400} ${size}px ${fam}`;      ctx.fillStyle = l.kind === "field" && !l.filled ? "#11335C" : "#161615";
     if (l.variant === "heading") y += 6 * k;
     const align = l.align || "left";
     ctx.textAlign = align;
@@ -121,7 +120,7 @@ function drawPaper(ctx, doc, step, mode, onLoad) {
       ctx.fillText(line, x, y - size * 0.28);
     }
     if (l.variant === "heading") {
-      ctx.fillStyle = "#141026";
+      ctx.fillStyle = "#121A14";
       ctx.fillRect(m, y + 1.5 * k, maxW, hair);
       y += 4 * k;
     }
@@ -129,7 +128,7 @@ function drawPaper(ctx, doc, step, mode, onLoad) {
 
   ctx.textAlign = "left";
   ctx.font = `500 18px ${FONT}`;
-  ctx.fillStyle = mode === "shared" ? "#C2410C" : "#615B73";
+  ctx.fillStyle = mode === "shared" ? "#96241C" : "#60605A";
   ctx.fillText(mode === "shared" ? "Shared with community" : "On this device only", m, TH - 30);
   ctx.restore();
 }
@@ -250,7 +249,7 @@ export default function Paper() {
     <>
       <ambientLight intensity={1.1} />
       <directionalLight position={[-2, 3, 5]} intensity={1.8} />
-      <pointLight position={[3, -1, 2.5]} color="#7B61FF" intensity={0.3} />
+      <pointLight position={[3, -1, 2.5]} color="#11335C" intensity={0.22} />
       <group ref={group} position={[0, 0.12, 0]}>
         <mesh geometry={parts.geo}>
           <meshStandardMaterial
@@ -277,7 +276,7 @@ export default function Paper() {
           />
         </mesh>
       </group>
-      <ContactShadows position={[0, -1.7, 0]} scale={6} blur={2.6} far={3} opacity={0.32} color="#4B3BB0" />
+      <ContactShadows position={[0, -1.7, 0]} scale={6} blur={2.6} far={3} opacity={0.32} color="#0B5540" />
     </>
   );
 }

@@ -7,7 +7,7 @@ import { SITE } from "../data/site";
 export default function LegalReport({ title, lead, rows = [], otherLink }) {
   return (
     <>
-      <section className="page-x max-w-[1600px] mx-auto pt-14 md:pt-20 pb-16 md:pb-24">
+      <section className="page-x max-w-[1200px] mx-auto pt-14 md:pt-20 pb-16 md:pb-24">
         <div className="page-grid gap-y-10">
           <div className="col-span-12 lg:col-span-4">
             <h1 className="t-page text-ink">{title}</h1>
@@ -31,7 +31,7 @@ export default function LegalReport({ title, lead, rows = [], otherLink }) {
         </div>
       </section>
       <nav aria-label="More links" className="border-t border-line">
-        <div className="page-x max-w-[1600px] mx-auto py-6 flex flex-wrap gap-x-8 gap-y-2 text-[15px]">
+        <div className="page-x max-w-[1200px] mx-auto py-6 flex flex-wrap gap-x-8 gap-y-2 text-[15px]">
           <Link to="/#editor" className="text-primary font-semibold ui-link min-h-[44px] inline-flex items-center">Back to the editor</Link>
           {otherLink && <Link to={otherLink.to} className="text-ink ui-link min-h-[44px] inline-flex items-center">{otherLink.label}</Link>}
           <a href={SITE.url} className="text-ink ui-link min-h-[44px] inline-flex items-center">{SITE.domain}</a>

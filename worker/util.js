@@ -43,6 +43,21 @@ export async function readBody(request) {
   }
 }
 
+/**
+ * Whether this request carries the owner pass, compared with OWNER_PASS.
+ * No secret set means nobody is the owner: mailed-in and uploaded documents stay
+ * invisible rather than becoming public by accident.
+ */
+export function isOwner(request, env) {
+  const expected = String(env.OWNER_PASS || "");
+  if (!expected) return false;
+  const sent = String(request.headers.get("x-wron-owner") || "");
+  if (!sent || sent.length !== expected.length) return false;
+  let diff = 0;
+  for (let i = 0; i < sent.length; i++) diff |= sent.charCodeAt(i) ^ expected.charCodeAt(i);
+  return diff === 0;
+}
+
 /** The visitor's address, hashed: enough to rate-limit, never stored in the clear. */
 export function clientIp(request) {
   return request.headers.get("cf-connecting-ip") || request.headers.get("x-forwarded-for") || "local";

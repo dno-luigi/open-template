@@ -12,9 +12,11 @@ export default {
       "line": "rgb(var(--c-line) / <alpha-value>)",
       "primary": {
         "DEFAULT": "rgb(var(--c-primary) / <alpha-value>)",
+        "dark": "rgb(var(--c-primary-dark) / <alpha-value>)",
         "ink": "rgb(var(--c-primary-ink) / <alpha-value>)"
       },
-      "accent": "rgb(var(--c-accent) / <alpha-value>)"
+      "accent": "rgb(var(--c-accent) / <alpha-value>)",
+      "danger": "rgb(var(--c-danger) / <alpha-value>)"
     },
     "fontFamily": {
       "display": [
@@ -37,7 +39,8 @@ export default {
       "DEFAULT": "rgb(var(--c-line) / <alpha-value>)"
     },
     "maxWidth": {
-      "page": "80rem"
+      "page": "80rem",
+      "shell": "var(--shell)"
     }
   } },
   plugins: [typography],

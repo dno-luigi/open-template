@@ -16,10 +16,10 @@ export default function TermsRows() {
           key={r.title}
           className={cn(
             "w-full border-b border-line",
-            r.note && "bg-surface bg-[radial-gradient(circle_at_14%_50%,rgba(255,255,255,.95),transparent_34%)] shadow-[inset_6px_0_0_0_#5B3DF5]"
+            r.note && "bg-surface bg-[radial-gradient(circle_at_14%_50%,rgba(255,255,255,.95),transparent_34%)] shadow-[inset_6px_0_0_0_#0F6B4F]"
           )}
         >
-          <div className="page-x max-w-[1600px] mx-auto w-full py-10 md:py-14">
+          <div className="page-x max-w-[1200px] mx-auto w-full py-10 md:py-14">
             <div>
               <h2 className="t-section text-ink">{r.title}</h2>
               <p className="mt-4 max-w-[360px] text-lg leading-7 text-muted">{r.body}</p>

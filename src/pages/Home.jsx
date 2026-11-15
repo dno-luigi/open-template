@@ -8,6 +8,7 @@ import { SITE } from "../data/site";
 
 // Sections below the editor load after the first paint.
 const MyTemplates = lazy(() => import("../components/home/MyTemplates"));
+const FormLibrary = lazy(() => import("../components/home/FormLibrary"));
 const Community = lazy(() => import("../components/home/Community"));
 const ClosingNote = lazy(() => import("../components/home/ClosingNote"));
 
@@ -35,6 +36,7 @@ export default function Home() {
       <Editor />
       <Suspense fallback={<div className="min-h-[40vh]" aria-hidden="true" />}>
         <MyTemplates />
+        <FormLibrary />
         <Community />
         <ClosingNote />
       </Suspense>

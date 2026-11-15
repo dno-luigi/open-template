@@ -10,7 +10,7 @@ function IconBtn({ label, onClick, disabled, children }) {
       title={label}
       onClick={onClick}
       disabled={disabled}
-      className="inline-flex items-center justify-center w-11 h-11 md:w-8 md:h-8 rounded-[6px] text-muted hover:text-primary hover:bg-surface transition-colors duration-150 active:translate-y-px disabled:opacity-30 disabled:pointer-events-none"
+      className="inline-flex items-center justify-center w-11 h-11 md:w-8 md:h-8 rounded-[10px] text-muted hover:text-primary hover:bg-surface transition-colors duration-150 active:translate-y-px disabled:opacity-30 disabled:pointer-events-none"
     >
       {children}
     </button>
@@ -42,7 +42,7 @@ const KIND = { image: "Image", field: "Field", rule: "Divider line", text: "Text
 
 export default function BlockEditor({ block: b, index: i, count, focusId, onMove, onRemove, onChange }) {
   return (
-    <li className="rounded-[6px] border border-line bg-bg p-3">
+    <li className="rounded-[10px] border border-line bg-bg p-3">
       <div className="flex items-center justify-between gap-2 mb-1">
         <span className="t-meta text-muted tabular-nums">
           {KIND[b.type] || "Text"} {i + 1}

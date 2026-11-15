@@ -12,7 +12,7 @@ export default function MyTemplates() {
   const [confirm, setConfirm] = useState(null);
 
   return (
-    <section id="my-templates" aria-labelledby="my-title" className="page-x max-w-[1600px] mx-auto py-16 md:py-20 scroll-mt-24">
+    <section id="my-templates" aria-labelledby="my-title" className="page-x max-w-[1200px] mx-auto py-16 md:py-20 scroll-mt-24">
       <div className="grid lg:grid-cols-12 gap-8 lg:gap-6">
         <Reveal y={12} className="lg:col-span-4">
           <h2 id="my-title" className="t-section text-ink">My templates</h2>
@@ -24,7 +24,7 @@ export default function MyTemplates() {
 
         <div className="lg:col-span-8">
           {templates.length === 0 ? (
-            <div className="rounded-theme border border-line bg-surface/60 min-h-[240px] flex flex-col items-center justify-center gap-5 py-16 px-6 text-center">
+            <div className="rounded-[20px] border border-line bg-surface/60 min-h-[240px] flex flex-col items-center justify-center gap-5 py-16 px-6 text-center">
               <p className="text-[16px] md:text-[17px] text-muted">Nothing saved on this device yet.</p>
               <Button onClick={startEditing}>Create a template</Button>
             </div>

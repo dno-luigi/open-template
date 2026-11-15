@@ -15,6 +15,7 @@ export const NAV = [
   { id: "templates", label: "Templates" },
   { id: "editor", label: "Editor" },
   { id: "my-templates", label: "My templates" },
+  { id: "forms", label: "Court forms" },
   { id: "community", label: "Community" },
 ];
 
@@ -30,7 +31,7 @@ export const STATUS = {
 };
 
 // Still picture of the paper, used as the 3D poster and the no-WebGL fallback.
-export const PAPER_POSTER = "/paper-poster.webp";
+export const PAPER_POSTER = "/paper-poster.svg";
 
 // Cloudflare D1 tables (see migrations/0001_init.sql and db/schema.json)
 export const TABLES = {

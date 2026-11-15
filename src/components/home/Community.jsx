@@ -71,14 +71,14 @@ export default function Community() {
     state = (
       <div className="py-14 md:py-20 px-6 text-center" role="alert">
         <p className="inline-flex items-start gap-2 text-[15px] text-ink">
-          <AlertCircle className="w-5 h-5 text-[#B42318] shrink-0" aria-hidden="true" />
+          <AlertCircle className="w-5 h-5 text-[#9B2C1F] shrink-0" aria-hidden="true" />
           The community cannot load right now. Your device templates still work.
         </p>
         <div className="mt-4">
           <button
             type="button"
             onClick={reload}
-            className="h-11 px-5 rounded-[6px] border border-primary/60 text-primary t-btn hover:border-primary hover:bg-surface transition-colors duration-150 active:translate-y-px"
+            className="h-11 px-5 rounded-[10px] border border-primary/60 text-primary t-btn hover:border-primary hover:bg-surface transition-colors duration-150 active:translate-y-px"
           >
             Retry
           </button>
@@ -95,7 +95,7 @@ export default function Community() {
 
   return (
     <section id="community" aria-labelledby="community-title" className="bg-surface border-y border-line scroll-mt-24">
-      <div className="page-x max-w-[1600px] mx-auto py-16 md:py-24">
+      <div className="page-x max-w-[1200px] mx-auto py-16 md:py-24">
         <Reveal y={12}>
           <h2 id="community-title" className="t-section text-ink">Community templates</h2>
           <p className="mt-3 text-[16px] md:text-[18px] text-muted">Copy a template, fill it in and save it your way.</p>
@@ -111,7 +111,7 @@ export default function Community() {
               value={q}
               onChange={(e) => setQ(e.target.value)}
               placeholder="Search community templates"
-              className="w-full h-12 md:h-[52px] pl-12 pr-12 rounded-[6px] border border-line bg-bg text-[16px] text-ink placeholder:text-muted transition-colors duration-150 hover:border-primary/40 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+              className="w-full h-12 md:h-[52px] pl-12 pr-12 rounded-[10px] border border-line bg-bg text-[16px] text-ink placeholder:text-muted transition-colors duration-150 hover:border-primary/40 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
             />
             {q && (
               <button
@@ -148,7 +148,7 @@ export default function Community() {
 
         {error && all.length > 0 && (
           <p role="alert" className="mt-6 flex flex-wrap items-center gap-2 text-[15px] text-ink">
-            <AlertCircle className="w-4 h-4 text-[#B42318]" aria-hidden="true" />
+            <AlertCircle className="w-4 h-4 text-[#9B2C1F]" aria-hidden="true" />
             The community list could not refresh.
             <button type="button" onClick={reload} className="font-semibold text-primary ui-link min-h-11 md:min-h-0">Retry</button>
           </p>

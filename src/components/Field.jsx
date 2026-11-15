@@ -3,7 +3,7 @@ import { ChevronDown } from "lucide-react";
 import { cn } from "@wron/kit";
 
 const control =
-  "w-full rounded-[6px] border border-line bg-bg px-3.5 text-[16px] text-ink placeholder:text-muted/80 " +
+  "w-full rounded-[10px] border border-line bg-bg px-3.5 text-[16px] text-ink placeholder:text-muted/80 " +
   "transition-colors duration-150 hover:border-primary/40 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20";
 
 function Label({ htmlFor, children, hint }) {
@@ -64,7 +64,7 @@ export function Checkbox({ label, className, id, ...rest }) {
   const fid = id || auto;
   return (
     <label htmlFor={fid} className={cn("flex items-start gap-3 min-h-[44px] py-2 cursor-pointer text-[15px] text-ink", className)}>
-      <input id={fid} type="checkbox" className="mt-0.5 w-5 h-5 shrink-0 accent-[#5B3DF5]" {...rest} />
+      <input id={fid} type="checkbox" className="mt-0.5 w-5 h-5 shrink-0 accent-[#11335C]" {...rest} />
       <span>{label}</span>
     </label>
   );

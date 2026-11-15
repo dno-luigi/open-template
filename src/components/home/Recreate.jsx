@@ -40,7 +40,7 @@ function Steps({ current }) {
 
 const seg = (on) =>
   cn(
-    "h-11 px-4 rounded-[6px] border text-[15px] transition-colors duration-150 active:translate-y-px",
+    "h-11 px-4 rounded-full border text-[15px] transition-colors duration-150 active:translate-y-px",
     on ? "bg-primary border-primary text-primary-ink font-semibold" : "bg-bg border-line text-ink hover:border-primary/50"
   );
 
@@ -158,7 +158,7 @@ export default function Recreate() {
   const use = () => (isEmptyDoc(getCurrentDoc()) ? finish() : setPending(true));
 
   return (
-    <section id="recreate" aria-labelledby="recreate-title" className="page-x max-w-[1600px] mx-auto pt-14 md:pt-20 pb-4 scroll-mt-24">
+    <section id="recreate" aria-labelledby="recreate-title" className="page-x max-w-[1200px] mx-auto pt-14 md:pt-20 pb-4 scroll-mt-24">
       <Reveal y={12}>
         <h2 id="recreate-title" className="t-section text-ink">Recreate any form</h2>
         <p className="mt-3 text-[16px] md:text-[18px] text-muted max-w-[52ch]">
@@ -167,7 +167,7 @@ export default function Recreate() {
       </Reveal>
 
       <Reveal y={12} className="mt-8 md:mt-10">
-        <div className="rounded-theme border border-line bg-bg">
+        <div className="rounded-[20px] border border-line bg-bg">
           <div className="p-5 md:p-8 border-b border-line">
             <Steps current={current} />
           </div>
@@ -193,7 +193,7 @@ export default function Recreate() {
                 onDragLeave={() => setOver(false)}
                 onDrop={(e) => { e.preventDefault(); setOver(false); load(e.dataTransfer.files?.[0]); }}
                 className={cn(
-                  "mt-5 rounded-theme border border-dashed px-5 py-9 md:py-12 text-center transition-colors duration-150",
+                  "mt-5 rounded-[20px] border border-dashed px-5 py-9 md:py-12 text-center transition-colors duration-150",
                   over ? "border-primary bg-surface" : "border-primary/40 bg-surface/60"
                 )}
               >
@@ -292,12 +292,12 @@ export default function Recreate() {
                   {busy && <p role="status" className="mb-4 text-[15px] text-ink">Reading the form. This can take a few seconds.</p>}
                   {error && (
                     <p role="alert" className="mb-4 flex items-start gap-2 text-[15px] text-ink">
-                      <AlertCircle className="w-5 h-5 text-[#B42318] shrink-0" aria-hidden="true" />
+                      <AlertCircle className="w-5 h-5 text-[#9B2C1F] shrink-0" aria-hidden="true" />
                       {error}
                     </p>
                   )}
                   {items.length === 0 ? (
-                    <div className="rounded-[6px] border border-line bg-surface/60 px-5 py-10 text-center text-[15px] text-muted">
+                    <div className="rounded-[10px] border border-line bg-surface/60 px-5 py-10 text-center text-[15px] text-muted">
                       No points yet. Click the scan where a blank or a heading sits, or press Add a point.
                     </div>
                   ) : (

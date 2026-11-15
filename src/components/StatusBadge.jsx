@@ -16,7 +16,7 @@ export default function StatusBadge({ status = "device", pulse, className }) {
         className
       )}
     >
-      <Icon className={cn("w-[18px] h-[18px]", shared ? "text-[#C2410C]" : "text-primary")} aria-hidden="true" />
+      <Icon className={cn("w-[18px] h-[18px]", shared ? "text-[#9B2C1F]" : "text-primary")} aria-hidden="true" />
       {shared ? STATUS.shared : STATUS.device}
     </span>
   );

@@ -51,8 +51,10 @@ export async function handleShot(request, env, body) {
   const db = env.DB;
   const day = nowIso().slice(0, 10);
   const ipHash = await sha256Hex(clientIp(request));
-  const limit = Number(env.AI_DAILY_LIMIT || 20) || 20;
-  if (db) {
+  // 0 (or unset) means no cap, which is the default while building templates.
+  const limit = Number(env.AI_DAILY_LIMIT || 0);
+  const enforce = Number.isFinite(limit) && limit > 0;
+  if (db && enforce) {
     const used = await db
       .prepare("SELECT COUNT(*) AS n FROM ai_usage WHERE day = ? AND ip_hash = ?")
       .bind(day, ipHash)
@@ -104,7 +106,7 @@ export async function handleShot(request, env, body) {
       });
     }
 
-    if (db) {
+    if (db && enforce) {
       await db
         .prepare("INSERT INTO ai_usage (id, ip_hash, day, created_at) VALUES (?, ?, ?, ?)")
         .bind(crypto.randomUUID(), ipHash, day, nowIso())

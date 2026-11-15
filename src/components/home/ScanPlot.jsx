@@ -9,7 +9,7 @@ export default function ScanPlot({ img, items, selected, onPlace, onSelect }) {
   };
   return (
     <div>
-      <div className="relative max-w-[560px] border border-line bg-white rounded-[6px] overflow-hidden">
+      <div className="relative max-w-[560px] border border-line bg-white rounded-[10px] overflow-hidden">
         <Img src={img.src} alt="Your scan of the form" ratio={`${img.width}/${img.height}`} imgClassName="object-contain" />
         <div onClick={place} className="absolute inset-0" aria-hidden="true" />
         {items.map((it, i) =>
@@ -28,7 +28,7 @@ export default function ScanPlot({ img, items, selected, onPlace, onSelect }) {
                 "before:absolute before:-inset-2 before:content-['']",
                 "transition-colors duration-150 active:scale-[0.98]",
                 it.id === selected
-                  ? "bg-primary border-primary text-primary-ink shadow-[0_0_0_3px_rgba(91,61,245,0.25)]"
+                  ? "bg-primary border-primary text-primary-ink shadow-[0_0_0_3px_rgba(17,51,92,0.25)]"
                   : "bg-white border-primary text-primary hover:bg-surface"
               )}
             >

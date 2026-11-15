@@ -9,7 +9,7 @@ export default function Privacy() {
       title="Privacy notice"
       description="What stays on your device and what is shared: saved templates, drafts and optional community sharing, explained in plain language."
     >
-      <div className="page-x max-w-[1600px] mx-auto pt-14 md:pt-24 pb-16">
+      <div className="page-x max-w-[1200px] mx-auto pt-14 md:pt-24 pb-16">
         <div className="page-grid">
           <header className="col-span-12 lg:col-span-6">
             <h1 className="t-page text-ink">Privacy notice</h1>
