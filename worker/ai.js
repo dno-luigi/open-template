@@ -33,8 +33,11 @@ const DEFAULT_MODELS =
  */
 export function parseModels(raw) {
   return String(raw || "")
+    // Comments go first: a "#" line can contain commas, and stripping after the
+    // split would leave its fragments behind as models.
+    .replace(/#[^\n]*/g, "")
     .split(/[\n,;]+/)
-    .map((entry) => entry.replace(/#.*$/, "").trim())
+    .map((entry) => entry.trim())
     .filter(Boolean);
 }
 const MAX_IMAGE_BYTES = 4 * 1024 * 1024;
