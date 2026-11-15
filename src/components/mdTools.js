@@ -119,7 +119,15 @@ export function parseDocument(src) {
       const heading = doc.querySelector("h1");
       const title = tidy(doc.querySelector("title")?.textContent) || tidy(heading?.textContent);
       const blocks = htmlToBlocks(root);
-      if (blocks.length) return { title: title.slice(0, 120), blocks };
+      if (blocks.length) {
+        // The page's own <h1> is the same words as its <title>; the sheet already
+        // prints that name above the page, so the heading would say it twice.
+        const same = (a, b) =>
+          String(a).toLowerCase().replace(/[^a-z0-9]+/g, "") === String(b).toLowerCase().replace(/[^a-z0-9]+/g, "");
+        const first = blocks[0];
+        if (first && first.type === "text" && first.variant === "name" && same(first.text, title)) blocks.shift();
+        return { title: title.slice(0, 120), blocks };
+      }
     } catch {
       // Not parseable as HTML after all: fall through and read it as text.
     }
