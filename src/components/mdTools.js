@@ -126,13 +126,15 @@ export function parseDocument(src) {
           String(a).toLowerCase().replace(/[^a-z0-9]+/g, "") === String(b).toLowerCase().replace(/[^a-z0-9]+/g, "");
         const first = blocks[0];
         if (first && first.type === "text" && first.variant === "name" && same(first.text, title)) blocks.shift();
-        return { title: title.slice(0, 120), blocks };
+        // html is the page itself, for the frame; blocks are the fallback for places
+        // that cannot draw a frame (thumbnails, plain-text tools).
+        return { title: title.slice(0, 120), html: source, blocks };
       }
     } catch {
       // Not parseable as HTML after all: fall through and read it as text.
     }
   }
-  return { title: "", blocks: parseMarkdown(source) };
+  return { title: "", html: "", blocks: parseMarkdown(source) };
 }
 
 export function parseMarkdown(src) {

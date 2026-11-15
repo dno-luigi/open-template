@@ -80,6 +80,13 @@ export default function EditorControls() {
         return;
       }
       const name = (parsed.title || file.name.replace(/\.[^.]+$/, "")).slice(0, 80);
+      if (parsed.html) {
+        // A whole page is the document: it replaces the sheet and keeps its own look,
+        // rather than being poured into blocks that would redraw it in our type.
+        setDoc((d) => ({ ...d, title: parsed.title || name, html: parsed.html, blocks: [] }));
+        toast.success("Page imported as it stands. Print it from the button above.");
+        return;
+      }
       setDoc((d) => ({ ...d, title: d.title || name, blocks: [...d.blocks, ...parsed.blocks] }));
       toast.success("File imported. Check the page and adjust it.");
     } catch {

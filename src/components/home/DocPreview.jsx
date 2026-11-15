@@ -20,6 +20,23 @@ export default function DocPreview({ doc, thumb = false, onEdit, onTitle }) {
     if (e.key === "Escape") e.currentTarget.blur();
   };
 
+  // A page kept as written gets its own frame: its CSS, its fields, its print button.
+  // Sandboxed without same-origin, so a shared page can never reach this window.
+  if (doc?.html) {
+    return (
+      <div className={cn("sheet-wrap", thumb && "is-thumb")} {...region}>
+        <iframe
+          id="doc-page"
+          className="sheet-page"
+          title={doc.title?.trim() || "Imported page"}
+          srcDoc={doc.html}
+          loading={thumb ? "lazy" : "eager"}
+          sandbox="allow-scripts allow-modals allow-popups allow-forms"
+        />
+      </div>
+    );
+  }
+
   return (
     <div className={cn("sheet-wrap", thumb && "is-thumb")} {...region}>
       <div

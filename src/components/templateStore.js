@@ -34,7 +34,9 @@ export const uid = () => Math.random().toString(36).slice(2, 10) + Date.now().to
 export function newDoc(partial = {}) {
   // font: "serif" (Times style) or "sans" (Helvetica style). margin: "1" or "0.75" inches.
   // printTitle: older drafts have no value and print the title, as before.
-  return { id: uid(), title: "", category: "", blocks: [], source: null, updatedAt: null, font: "serif", margin: "1", printTitle: true, ...partial };
+  return { id: uid(), title: "", category: "", blocks: [], html: "", source: null, updatedAt: null, font: "serif", margin: "1", printTitle: true, ...partial };
+  // html: a whole page kept as written (an imported HTML document), shown in its own
+  // frame so its type, spacing and fields survive. blocks stay empty in that mode.
 }
 export const VARIANTS = ["body", "bold", "heading", "name", "label"];
 export const ALIGNS = ["left", "center", "right"];
@@ -56,6 +58,7 @@ export function docFromCommunity(row) {
     font: content?.font === "sans" ? "sans" : "serif",
     margin: content?.margin === "0.75" ? "0.75" : "1",
     printTitle: content?.printTitle !== false,
+    html: typeof content?.html === "string" ? content.html : "",
     blocks: blocks.map((b) =>
       b.type === "field"
         ? fieldBlock(b.label || "Field", "", b)
@@ -72,6 +75,8 @@ export function contentForSharing(doc) {
     font: doc.font === "sans" ? "sans" : "serif",
     margin: doc.margin === "0.75" ? "0.75" : "1",
     printTitle: doc.printTitle !== false,
+    // A kept page travels whole; without it a shared copy would arrive blank.
+    html: typeof doc.html === "string" ? doc.html.slice(0, 300000) : "",
     blocks: (doc.blocks || [])
       .filter((b) => b.type !== "image")
       .map((b) =>
@@ -113,7 +118,7 @@ export function docLines(doc) {
   }
   return lines;
 }
-export const isEmptyDoc = (doc) => !doc?.title?.trim() && !(doc?.blocks || []).length;
+export const isEmptyDoc = (doc) => !doc?.title?.trim() && !String(doc?.html || "").trim() && !(doc?.blocks || []).length;
 
 // ---------- Tiny shared store helper ----------
 function createStore(initial) {

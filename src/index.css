@@ -51,6 +51,16 @@
   box-shadow: 0 1px 2px rgba(18, 26, 20, 0.05), 0 22px 44px -22px rgba(15, 107, 79, 0.28);
   overflow-wrap: anywhere;
 }
+.sheet-page {
+  display: block;
+  width: 100%;
+  aspect-ratio: 8.5 / 11;
+  border: 0;
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(18, 26, 20, 0.05), 0 22px 44px -22px rgba(15, 107, 79, 0.28);
+}
+/* A thumbnail of a kept page is a picture, not something to scroll inside. */
+.is-thumb .sheet-page { pointer-events: none; }
 .sheet-serif { font-family: "Times New Roman", Times, "Liberation Serif", serif; }
 .sheet-sans { font-family: Helvetica, Arial, "Liberation Sans", sans-serif; }
 /* Never rescale the type: 11pt on the sheet is 11pt, so the preview holds the

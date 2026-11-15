@@ -61,7 +61,23 @@ export default function Editor() {
                   {doc.title?.trim() || "Untitled page"} — editable template. Changes stay in this browser until
                   printed or saved as PDF.
                 </p>
-                <button type="button" className="ws-print" onClick={() => pdfNow()}>
+                <button
+                  type="button"
+                  className="ws-print"
+                  onClick={() => {
+                    // An imported page prints itself: its own rules decide the margins,
+                    // and the browser's dialog turns that into a PDF.
+                    if (doc.html) {
+                      const frame = document.getElementById("doc-page");
+                      if (frame && frame.contentWindow) {
+                        frame.contentWindow.focus();
+                        frame.contentWindow.print();
+                        return;
+                      }
+                    }
+                    pdfNow();
+                  }}
+                >
                   <Printer className="w-[18px] h-[18px]" aria-hidden="true" />
                   Print Document / Save as PDF
                 </button>
