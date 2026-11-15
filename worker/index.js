@@ -28,6 +28,7 @@ import { handleFileGet, handleUpload } from "./files.js";
 import { handleEmail, ingestMessage } from "./inbox.js";
 import { handleJcf } from "./jcf.js";
 import { handleForms, handleLibrary } from "./library.js";
+import { handleModerate } from "./moderate.js";
 import { handleShot } from "./shot.js";
 import { fail, isOwner, json, readBody } from "./util.js";
 
@@ -96,6 +97,8 @@ export default {
           return await handleForms(request, env, body);
         case "library":
           return await handleLibrary(request, env, body);
+        case "moderate":
+          return await handleModerate(request, env, body);
         case "hit":
         case "errors":
           // Beacons: accepted so the page never errors, deliberately not stored.
