@@ -11,8 +11,17 @@
     "binding": "ASSETS",
     "directory": "./dist",
     "not_found_handling": "single-page-application",
-    "run_worker_first": ["/api/*"]
+    // /files/* must reach the Worker, or the asset handler answers with the SPA
+    // shell and every stored PDF is served as index.html.
+    "run_worker_first": ["/api/*", "/files/*"]
   },
+  // Stored forms and mailed files. No id: Wrangler creates the bucket on deploy.
+  "r2_buckets": [
+    {
+      "binding": "FILES",
+      "bucket_name": "open-template-library-files"
+    }
+  ],
   "d1_databases": [
     {
       "binding": "DB",

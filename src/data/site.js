@@ -15,6 +15,7 @@ export const NAV = [
   { id: "templates", label: "Templates" },
   { id: "editor", label: "Editor" },
   { id: "my-templates", label: "My templates" },
+  { id: "forms", label: "Court forms" },
   { id: "community", label: "Community" },
 ];
 
