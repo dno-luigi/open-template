@@ -38,7 +38,12 @@ function htmlToBlocks(root) {
   const push = (block) => {
     if (block && out.length < 400) out.push(block);
   };
-  const textOf = (el) => tidy(el.textContent);
+  // A <br> is a space in a sentence, not nothing: clone, swap, then read the text.
+  const textOf = (el) => {
+    const copy = el.cloneNode(true);
+    for (const br of copy.querySelectorAll("br")) br.replaceWith(" ");
+    return tidy(copy.textContent);
+  };
 
   const fieldFor = (el, label) => {
     const own = unplacehold(textOf(el));
