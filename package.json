@@ -10,7 +10,8 @@
     "preview": "vite preview",
     "experiment": "node scripts/experiment.mjs",
     "pipeline": "node scripts/pipeline.mjs",
-    "deploy": "npm run build && wrangler deploy",
+    "deploy": "npm run models:check && npm run build && wrangler deploy",
+    "models:check": "node scripts/check-models.mjs",
     "db:migrate:local": "wrangler d1 migrations apply open-template-library --local",
     "db:migrate": "wrangler d1 migrations apply open-template-library --remote"
   },

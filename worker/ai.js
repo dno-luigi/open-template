@@ -14,13 +14,29 @@
 // counted per visitor IP so an open site cannot spend credits without limit.
 import { sha256Hex } from "./crypto.js";
 import { clientIp, fail, json, nowIso } from "./util.js";
+// The allowlist, imported as text: one model per line, edited as a plain list.
+// Wrangler's Text rule in wrangler.jsonc makes this a module at build time.
+import MODELS_FILE from "../models.txt";
 
 const DEFAULT_TEXT_MODEL = "@cf/meta/llama-3.3-70b-instruct-fp8-fast";
 const DEFAULT_VISION_MODEL = "@cf/meta/llama-3.2-11b-vision-instruct";
 /** An OpenRouter-style model slug works on the proxy; a vision model by default. */
 const DEFAULT_PROXY_MODEL = "openai/gpt-4o-mini";
+/** Used only if models.txt is empty, so the site still answers. */
 const DEFAULT_MODELS =
   "openai/gpt-4o-mini,google/gemini-2.5-flash,anthropic/claude-sonnet-4.5,qwen/qwen2.5-vl-72b-instruct";
+
+/**
+ * models.txt as a list. Lines, commas and semicolons all separate entries, and
+ * # starts a comment, so a pasted comma-separated line still parses instead of
+ * fusing ids together.
+ */
+export function parseModels(raw) {
+  return String(raw || "")
+    .split(/[\n,;]+/)
+    .map((entry) => entry.replace(/#.*$/, "").trim())
+    .filter(Boolean);
+}
 const MAX_IMAGE_BYTES = 4 * 1024 * 1024;
 const MAX_IMAGES = 2;
 
@@ -134,10 +150,8 @@ export async function handleAi(request, env, body) {
   if (!messages.length) return fail(400, "empty_prompt", "Describe the form you want first.");
 
   // Only models the owner listed can be chosen, so a caller cannot run up a bill.
-  const models = String(env.AI_MODELS || DEFAULT_MODELS)
-    .split(",")
-    .map((m) => m.trim())
-    .filter(Boolean);
+  // A dashboard AI_MODELS still wins, so a model can be added without a deploy.
+  const models = parseModels(env.AI_MODELS || MODELS_FILE || DEFAULT_MODELS);
   const requested = typeof body.model === "string" ? body.model.trim() : "";
   if (requested && !models.includes(requested)) {
     return fail(400, "model_not_allowed", `Choose one of: ${models.join(", ")}.`);
