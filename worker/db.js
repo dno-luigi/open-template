@@ -10,6 +10,7 @@
 // Column names are never taken from the request: only the names in a table's
 // COLUMNS can reach the SQL, and every value is bound as a parameter.
 import { sha256Hex } from "./crypto.js";
+import { notifyShare } from "./notify.js";
 import { clientIp, fail, json, nowIso } from "./util.js";
 
 const MAX_LIMIT = 200;
@@ -201,7 +202,16 @@ async function addShare(request, env, values) {
     .prepare(`INSERT INTO shared_templates (${keys.join(", ")}) VALUES (${keys.map(() => "?").join(", ")})`)
     .bind(...Object.values(row))
     .run();
-  return json({ row: shape(row, TABLES.shared_templates) });
+  // The note is a courtesy: the share is already stored, and whether it went
+  // out does not change the answer.
+  const notified = await notifyShare(env, {
+    title,
+    category: row.category,
+    author: row.author_name,
+    when: at,
+  });
+
+  return json({ row: shape(row, TABLES.shared_templates), notified: notified.sent });
 }
 
 /** A report on a published template. Kept for the owner to read in D1. */

@@ -34,6 +34,12 @@
       "migrations_dir": "migrations"
     }
   ],
+  // Mail out when someone shares a template. Email Routing sends it from this
+  // zone, so there is no provider key here; the destination address must be
+  // verified under Email Routing → Destination addresses. OWNER_EMAIL is a
+  // Worker secret (the recipient), NOTIFY_FROM a plain var (an address on the
+  // domain Email Routing is set up for).
+  "send_email": [{ "name": "NOTIFY" }],
   "ai": {
     "binding": "AI"
   },
@@ -57,7 +63,8 @@
     // orproxy / OpenRouter. Set ORPROXY_API_KEY as a Worker secret; without it the
     // Worker falls back to Workers AI. Point ORPROXY_URL at your own proxy if it differs.
     "ORPROXY_URL": "https://openrouter.ai/api/v1",
-    "ORPROXY_MODEL": "google/gemma-4-26b-a4b-it"
+    "ORPROXY_MODEL": "google/gemma-4-26b-a4b-it",
+    "NOTIFY_FROM": "forms@nspired.cc"
   }
   // A Cloudflare service binding named AI_PROXY also works, and is used before
   // the URL: it must answer POST /chat/completions in the OpenAI format.

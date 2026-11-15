@@ -36,7 +36,25 @@ storage.
 
 Access rules are enforced in the Worker, not the browser: anyone can read
 published community templates, anyone can submit a share, a report or a copy,
-and only you (in D1) can publish a share.
+and only you (with the owner pass) can publish a share.
+
+### A note when a share arrives
+
+`worker/notify.js` emails you as the share row is written, so the review queue
+(`/#review`) doesn't have to be watched. Sending itself has to be switched on
+once, and either route is enough:
+
+- **Cloudflare Email Routing.** Dashboard → your zone → Email → Email Routing →
+  enable it, verify your address under **Destination addresses**, then
+  `npx wrangler secret put OWNER_EMAIL`. Cloudflare refuses to send from a zone
+  with routing off (`email sending not authorized for subdomain`), and only to
+  verified addresses.
+- **Resend.** Verify a sending domain at resend.com, then
+  `npx wrangler secret put RESEND_API_KEY`. `NOTIFY_FROM` (a var in
+  `wrangler.jsonc`, `forms@nspired.cc` by default) must be on that domain.
+
+With neither set, sharing still works and the note is skipped: the reply to the
+share carries `notified: false`, and the reason is in `wrangler tail`.
 
 ### First deploy
 
