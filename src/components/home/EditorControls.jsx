@@ -3,7 +3,7 @@ import { Type, Brackets, ImagePlus, Minus, Scale, FilePlus2, Upload, Download, F
 import { Dialog, toast } from "@wron/kit";
 import { useCurrentDoc, textBlock, fieldBlock, imageBlock, ruleBlock, isEmptyDoc } from "../templateStore";
 import { prepareImage, IMAGE_ACCEPT } from "../imageTools";
-import { parseMarkdown, downloadMarkdown } from "../mdTools";
+import { parseDocument, downloadMarkdown } from "../mdTools";
 import { TextField, SelectField, Checkbox } from "../Field";
 import Button from "../Button";
 import BlockEditor from "./BlockEditor";
@@ -72,13 +72,15 @@ export default function EditorControls() {
       return;
     }
     try {
-      const blocks = parseMarkdown(await file.text());
-      if (!blocks.length) {
+      // A saved HTML page carries its own <title>, which names the document better
+      // than the file name does; Markdown falls back to the file name.
+      const parsed = parseDocument(await file.text());
+      if (!parsed.blocks.length) {
         toast.error("That file has no text to import.");
         return;
       }
-      const name = file.name.replace(/\.[^.]+$/, "").slice(0, 80);
-      setDoc((d) => ({ ...d, title: d.title || name, blocks: [...d.blocks, ...blocks] }));
+      const name = (parsed.title || file.name.replace(/\.[^.]+$/, "")).slice(0, 80);
+      setDoc((d) => ({ ...d, title: d.title || name, blocks: [...d.blocks, ...parsed.blocks] }));
       toast.success("File imported. Check the page and adjust it.");
     } catch {
       toast.error("That file could not be read. Try a .md or .txt file.");

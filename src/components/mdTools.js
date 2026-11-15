@@ -1,5 +1,10 @@
-// Markdown in and out. Import turns a .md or .txt file into document parts.
-// Export writes the current document as Markdown, with unfilled fields as [[Field name]].
+// Documents in and out. Import turns a .md, .txt or a saved .html page into
+// document parts. Export writes the current document as Markdown, with unfilled
+// fields as [[Field name]].
+//
+// The HTML path exists because templates made elsewhere are often a whole page:
+// a <style>, a <main id="doc">, and blank fields in spans. Read as Markdown, that
+// is a wall of source on the page; read as HTML, it is the document it already was.
 import { textBlock, fieldBlock, ruleBlock, docLines } from "./templateStore";
 
 const clean = (s) =>
@@ -8,6 +13,114 @@ const clean = (s) =>
     .replace(/\[([^\]]+)\]\(([^)]+)\)/g, "$1")
     .replace(/(\*\*|__)(.*?)\1/g, "$2")
     .replace(/`([^`]+)`/g, "$1");
+
+/** A whole page rather than some Markdown: a doctype, or a body soon after the top. */
+export function isHtmlDocument(src) {
+  const head = String(src || "").slice(0, 4000);
+  return /^\s*(?:<!doctype\s+html|<html[\s>])/i.test(head) || /<body[\s>]/i.test(head);
+}
+
+const tidy = (s) => String(s || "").replace(/\u00a0/g, " ").replace(/\s+/g, " ").trim();
+
+/** "[Full legal name]" -> "Full legal name". The brackets are the placeholder. */
+const unplacehold = (s) => tidy(s).replace(/^[\s[]+/, "").replace(/[\s\]]+$/, "").replace(/:$/, "").trim();
+
+const SKIP = "script, style, noscript, button, select, textarea, input, .bar, .tip, [hidden]";
+const FIELDISH = ".fill, .sig, .blk";
+
+/**
+ * The blocks a saved HTML page describes: headings, paragraphs, list items, rules,
+ * and one blank per field span. Its own CSS is dropped (the page draws the sheet);
+ * so are toolbars and tap-to-type hints, which are not part of the document.
+ */
+function htmlToBlocks(root) {
+  const out = [];
+  const push = (block) => {
+    if (block && out.length < 400) out.push(block);
+  };
+  const textOf = (el) => tidy(el.textContent);
+
+  const fieldFor = (el, label) => {
+    const own = unplacehold(textOf(el));
+    push(fieldBlock(label || own || "Field", ""));
+  };
+
+  const visit = (el) => {
+    if (!el || el.nodeType !== 1 || el.matches(SKIP)) return;
+    const tag = el.tagName.toLowerCase();
+
+    if (/^h[1-6]$/.test(tag)) {
+      const text = textOf(el);
+      if (text) {
+        const variant = tag === "h1" ? "name" : tag === "h2" ? "heading" : "bold";
+        push(textBlock(text.toUpperCase() === text ? text : text, { variant, align: tag === "h1" ? "center" : "left" }));
+      }
+      return;
+    }
+    if (tag === "p") {
+      const text = textOf(el);
+      if (text) push(textBlock(text));
+      return;
+    }
+    if (tag === "li") {
+      const text = textOf(el);
+      if (text) push(textBlock(`• ${text}`));
+      return;
+    }
+    if (tag === "hr") {
+      push(ruleBlock());
+      return;
+    }
+    if (tag === "table") {
+      for (const row of el.querySelectorAll("tr")) {
+        const cells = [...row.children].map(textOf).filter(Boolean);
+        if (cells.length) push(textBlock(cells.join("   ")));
+      }
+      return;
+    }
+    // "Name: [blank]" is a labelled blank, not a sentence with a hole in it.
+    if (el.matches(".row") && el.querySelector(FIELDISH)) {
+      const label = el.querySelector(".lbl");
+      fieldFor(el.querySelector(FIELDISH), unplacehold(textOf(label || el.querySelector(FIELDISH))));
+      return;
+    }
+    if (el.matches(FIELDISH)) {
+      fieldFor(el);
+      return;
+    }
+    // Anything left with no children of its own is a line of the document.
+    if (!el.children.length) {
+      const text = textOf(el);
+      if (text) push(textBlock(text));
+      return;
+    }
+    for (const child of el.children) visit(child);
+  };
+
+  visit(root);
+  return out;
+}
+
+/**
+ * { title, blocks } for either format. A saved page's own <title> is a better name
+ * for the document than its file name.
+ */
+export function parseDocument(src) {
+  const source = String(src || "");
+  if (isHtmlDocument(source)) {
+    try {
+      const doc = new DOMParser().parseFromString(source, "text/html");
+      const root = doc.querySelector("#doc, main, body") || doc.body;
+      const heading = doc.querySelector("h1");
+      const title = tidy(doc.querySelector("title")?.textContent) || tidy(heading?.textContent);
+      const blocks = htmlToBlocks(root);
+      if (blocks.length) return { title: title.slice(0, 120), blocks };
+    } catch {
+      // Not parseable as HTML after all: fall through and read it as text.
+    }
+  }
+  return { title: "", blocks: parseMarkdown(source) };
+}
 
 export function parseMarkdown(src) {
   const blocks = [];
