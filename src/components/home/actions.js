@@ -53,6 +53,30 @@ export function useDocActions() {
       toast.error("There is nothing to print yet. Write something, or use the court form.");
       return;
     }
+    // A kept page is its own document: print it through the browser, which offers
+    // "Save as PDF" with the page's own margins. Drawn as blocks it would come out blank.
+    if (doc.html) {
+      const frame = document.createElement("iframe");
+      frame.setAttribute("sandbox", "allow-same-origin allow-modals allow-forms allow-popups");
+      frame.setAttribute("aria-hidden", "true");
+      frame.style.cssText = "position:fixed;left:-10000px;top:0;width:816px;height:1056px;border:0";
+      frame.srcdoc = doc.html;
+      document.body.appendChild(frame);
+      const printIt = () => {
+        try {
+          frame.contentWindow.focus();
+          frame.contentWindow.print();
+          paperState.set({ pdfError: false });
+        } catch {
+          toast.error("This page could not be printed from here. Open it in a browser tab instead.");
+        } finally {
+          setTimeout(() => frame.remove(), 60000);
+        }
+      };
+      if (frame.contentDocument?.readyState === "complete") printIt();
+      else frame.onload = printIt;
+      return;
+    }
     try {
       const { downloadPdf } = await import("./pdf");
       downloadPdf(doc);

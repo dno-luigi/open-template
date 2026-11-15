@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
-import { Type, Brackets, ImagePlus, Minus, Scale, FilePlus2, Upload, Download, FileText } from "lucide-react";
+import { Type, Brackets, ImagePlus, Minus, Scale, FilePlus2, Upload, Download, FileText, FolderOpen } from "lucide-react";
 import { Dialog, toast } from "@wron/kit";
-import { useCurrentDoc, textBlock, fieldBlock, imageBlock, ruleBlock, isEmptyDoc } from "../templateStore";
+import { useCurrentDoc, useDeviceTemplates, newDoc, textBlock, fieldBlock, imageBlock, ruleBlock, isEmptyDoc } from "../templateStore";
 import { prepareImage, IMAGE_ACCEPT } from "../imageTools";
 import { parseDocument, downloadMarkdown } from "../mdTools";
 import { TextField, SelectField, Checkbox } from "../Field";
@@ -46,6 +46,8 @@ export default function EditorControls() {
 
   const fileRef = useRef(null);
   const mdRef = useRef(null);
+  const folderRef = useRef(null);
+  const { save: saveTemplate } = useDeviceTemplates();
   const [busy, setBusy] = useState(false);
 
   const pickImage = async (e) => {
@@ -60,6 +62,65 @@ export default function EditorControls() {
       toast.error(err?.message || "That picture could not be added.");
     } finally {
       setBusy(false);
+    }
+  };
+
+  // "Life Estate Grant Deed — Editable Template" is the same document as "Life Estate
+  // Grant Deed"; the trailing label is a file convention, not part of the name.
+  const tidyTitle = (value) =>
+    String(value || "")
+      .replace(/\s*[—–-]\s*(?:an?\s+)?(?:editable\s+)?template\s*$/i, "")
+      .trim();
+
+  /**
+   * A folder of pages, one document each. Pages are saved to My templates rather than
+   * loaded into the sheet: a folder is a library, not one document.
+   */
+  const importFolder = async (e) => {
+    const picked = [...(e.target.files || [])];
+    e.target.value = "";
+    if (!picked.length) return;
+    const files = picked.filter((f) => /\.(html?|md|markdown|txt)$/i.test(f.name));
+    if (!files.length) {
+      toast.error("That folder has no .html, .md or .txt files.");
+      return;
+    }
+    if (files.length > 80) {
+      toast.error("That is more than 80 documents. Import a smaller folder.");
+      return;
+    }
+    // This browser keeps documents in local storage: about 5 MB in total.
+    const total = files.reduce((n, f) => n + (f.size || 0), 0);
+    if (total > 3 * 1024 * 1024) {
+      toast.error("That folder is over 3 MB. Import it in smaller batches.");
+      return;
+    }
+    setBusy(true);
+    let saved = 0;
+    let skipped = 0;
+    for (const file of files) {
+      try {
+        const parsed = parseDocument(await file.text());
+        if (!parsed.html && !parsed.blocks.length) {
+          skipped += 1;
+          continue;
+        }
+        const title = tidyTitle(parsed.title || file.name.replace(/\.[^.]+$/, "")) || file.name;
+        saveTemplate(
+          newDoc({ title: title.slice(0, 120), html: parsed.html || "", blocks: parsed.html ? [] : parsed.blocks })
+        );
+        saved += 1;
+      } catch {
+        skipped += 1;
+      }
+    }
+    setBusy(false);
+    if (saved) {
+      toast.success(
+        `${saved} document${saved === 1 ? "" : "s"} saved to My templates${skipped ? `, ${skipped} skipped` : ""}.`
+      );
+    } else {
+      toast.error("Nothing in that folder could be read as a document.");
     }
   };
 
@@ -270,14 +331,42 @@ export default function EditorControls() {
         <input
           ref={mdRef}
           type="file"
-          accept=".md,.markdown,.txt,text/markdown,text/plain"
+          accept=".md,.markdown,.txt,.html,.htm,text/markdown,text/plain,text/html"
           onChange={importText}
           className="sr-only"
           tabIndex={-1}
-          aria-label="Choose a Markdown or text file to import"
+          aria-label="Choose a Markdown, text or saved page to import"
         />
       </div>
-      <p className="mt-2 t-meta text-muted">Markdown and text files. Headings, lines, lists and [[Field]] lines map onto the page.</p>
+
+      <div className="mt-3">
+        <Button
+          variant="outline"
+          size="sm"
+          className="w-full md:h-10"
+          onClick={() => folderRef.current?.click()}
+          disabled={busy}
+        >
+          <FolderOpen className="w-4 h-4" aria-hidden="true" />
+          {busy ? "Reading the folder..." : "Import a folder"}
+        </Button>
+        <input
+          ref={folderRef}
+          type="file"
+          multiple
+          webkitdirectory=""
+          directory=""
+          accept=".html,.htm,.md,.markdown,.txt,text/html,text/markdown,text/plain"
+          onChange={importFolder}
+          className="sr-only"
+          tabIndex={-1}
+          aria-label="Choose a folder of documents to import"
+        />
+      </div>
+      <p className="mt-2 t-meta text-muted">
+        Markdown and text go onto the page; a saved HTML page keeps its own look. A folder imports one document per file,
+        named from its title, into My templates.
+      </p>
 
       {doc.blocks.length > 0 && (
         <details className="mt-6 group">

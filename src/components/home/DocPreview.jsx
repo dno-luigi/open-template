@@ -31,7 +31,7 @@ export default function DocPreview({ doc, thumb = false, onEdit, onTitle }) {
           title={doc.title?.trim() || "Imported page"}
           srcDoc={doc.html}
           loading={thumb ? "lazy" : "eager"}
-          sandbox="allow-scripts allow-modals allow-popups allow-forms"
+          sandbox="allow-same-origin allow-modals allow-forms allow-popups"
         />
       </div>
     );
